@@ -35,9 +35,9 @@ codegen-units	= 1      	# |16|    reduce parallel code generation
 panic        	= "abort"	# |unwind| save ~20k w/o drop-on-panic cleanup and std::panic::catch_unwind
 
 # Overrides doc.rust-lang.org/nightly/cargo/reference/profiles.html#overrides
-# [profile.dev.package."*"] # build dependencies in release mode to make the main app faster
-# opt-level	= 3	# |3|     s=size, z=size+
+[profile.dev.package."*"] # build dependencies in release mode to make the main app faster
+opt-level	= 3	# |3|     s=size, z=size+
 # panic/lto/rpath can't be overriden
 
-# [profile.dev.build-override] # build scripts and proc-macros
-# opt-level	= 3	# |3|     s=size, z=size+
+[profile.dev.build-override] # build scripts and proc-macros
+opt-level	= 3	# |3|     s=size, z=size+
