@@ -47,7 +47,10 @@ panic        	= "abort"	# |unwind| save ~20k w/o drop-on-panic cleanup and std::
 
 # Overrides doc.rust-lang.org/nightly/cargo/reference/profiles.html#overrides
 [profile.dev.package."*"] # build dependencies in release mode to make the main app faster
-opt-level	= 3	# |3|     s=size, z=size+
+opt-level       	= 3	# |3|     s=size, z=size+
+codegen-units   	= 16
+debug-assertions	= true
+overflow-checks 	= true
 # panic/lto/rpath can't be overriden
 
 [profile.dev.build-override] # build scripts and proc-macros
