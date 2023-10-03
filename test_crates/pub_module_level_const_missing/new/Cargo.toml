@@ -1,0 +1,11 @@
+[package]
+publish = false
+name = "pub_module_level_const_missing"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name	= "pub_module_level_const_missing_mod"
+path	= "src/new.lib.rs"
+
+[dependencies]
