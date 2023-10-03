@@ -7,6 +7,7 @@ build  	= "build.rs"
 
 [workspace]
 members = ["helper"]	# relative to the workspace root
+exclude = ["test_crates/pub_module_level_const_missing"]
 
 [[bin]]
 name	= "dummy_bin"
