@@ -1,5 +1,5 @@
 [package]  # help on keys doc.rust-lang.org/cargo/reference/manifest.html
-name   	= "dummy"
+name   	= "winGetConst"
 version	= "0.1.0"
 authors	= ["{{authors}}"]
 edition	= "2021"
@@ -10,12 +10,12 @@ members = ["helper"]	# relative to the workspace root
 exclude = ["test_crates/pub_module_level_const_missing"]
 
 [[bin]]
-name	= "dummy_bin"
-path	= "src/dummy.bin.rs"
+name	= "winGetConst"
+path	= "src/winGetConst.bin.rs"
 
 [lib]
-name      	= "dummy_lib"
-path      	= "src/dummy.lib.rs"
+name      	= "winGetConst_lib"
+path      	= "src/winGetConst.lib.rs"
 crate-type	= ['lib','cdylib']
 
 [dependencies]
