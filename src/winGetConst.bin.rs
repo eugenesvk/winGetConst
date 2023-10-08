@@ -1,14 +1,16 @@
 #![allow(unused_imports,unused_variables,unreachable_code,dead_code,non_upper_case_globals,non_snake_case)]
 extern crate helper;
-use std::path::PathBuf;
 use helper        	::*; // gets macros
 use helper::alias 	::*;
 use helper::helper	::*;
+use helper::fs    	::*;
+
+use std::path       	::{self,Path,PathBuf};
+use std::collections	::{HashMap,BTreeMap};
 
 pub mod binmod;
 use crate::binmod::print42;
 
-use std::{collections::BTreeMap, path::Path};
 
 use serde::{Deserialize, Serialize};
 use anyhow::Context;
