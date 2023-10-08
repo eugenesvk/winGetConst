@@ -1,0 +1,37 @@
+SemverQuery(id     	: "query_const",
+human_readable_name	: "list Constants and their data",
+description        	: "A pub const query",
+required_update    	: Major,
+reference_link     	: None,
+query : r#"{Crate { # List 'public' constants, their expr/values, where (file + line number) they were defined
+item {
+  ... on Constant                     	{                                	# unicode_normalization 0.1.22
+  visibility_limit                    	@filter(op:"=",value:["$public"])	#
+  name: name                          	@output                          	# UNICODE_VERSION
+  id                                  	@output                          	# 0:329:1673
+  id_crate: crate_id                  	@output                          	# 0
+  expr                                	@output                          	# 16
+  value                               	@output                          	# 16usize
+  #type_                              	@output                          	# excluded from scheme, use ID in Rust to get value from Crate
+  is_literal                          	@output                          	# true
+  importable_path {path_import: path  	@output}                         	# unicode_normalization,       UNICODE_VERSION
+  canonical_path  {path_canon : path  	@output}                         	# unicode_normalization,tables,UNICODE_VERSION
+  docs                                	@output                          	#
+  attrs                               	@output                          	# null
+  span {filename                      	@output                          	# src/tables.rs
+  first_line: begin_line              	@output }                        	# 18
+  attribute {raw_attribute            	@output is_inner                 	# [allow(unused)]
+    content                           	{                                	#
+      raw_item                        	@output                          	# allow(unused)
+      base                            	@output                          	# allow
+      assigned_item                   	@output                          	# null
+      argument {raw_item_arg: raw_item	@output}                         	# unused
+      }
+  }
+  }
+ }
+} }"#,
+arguments: {"public":"public",},
+error_message: "err",
+per_result_error_template: Some("{{name}} in file {{span_filename}}:{{span_begin_line}}"),
+)
