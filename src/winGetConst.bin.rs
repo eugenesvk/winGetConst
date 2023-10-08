@@ -33,5 +33,28 @@ fn main() {
   let query_path        	:&Path	= Path::new("./test_data/query_const.ron");
   // let _ = rustdoc_find_consts(&crate_rustdoc_path,&query_path);
 
+fn test(){
+  pub enum TypeX {
+    Generic(String),
+    Array {
+      t: String,
+      len: String,
+    },
+  }
+  let mytype1 = TypeX::Generic("asdf".to_string());
+  let mytype2 = TypeX::Array{t:"array_t".to_string(),len:"array_len".to_string()};
+  let out1 = match mytype1 {
+    TypeX::Generic(s)	=> s,
+    _                	=> "something else".to_string(),
+  };
+  let out2 = match mytype2 {
+    TypeX::Generic(s) 	=> s,
+    TypeX::Array{t,..}	=> t,
+  };
+  p!("{}\t{}",out1,out2);
+}
+
+
+
   rustdoc_find_consts_adapter_directly(&crate_rustdoc_path,&query_path);
 }
