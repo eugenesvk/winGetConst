@@ -57,4 +57,14 @@ fn test(){
 
 
   rustdoc_find_consts_adapter_directly(&crate_rustdoc_path,&query_path);
+
+fn test1(){
+  // let val:&str	= "5i32";
+  // let my_num  	= parse_num_suffix(&val);
+  // p!("{:?} → {:?}",val,my_num.unwrap());
+  // const LOG_AS  : &str = "batch"  ; // true None `"\"batch\""` including escaped quotes
+  let val:&str	= "-2147483648i32";
+  let my_num  	= parse_lit(&val);
+  p!("{:?} → {:?}",val,my_num);
+}
 }
