@@ -72,6 +72,12 @@ fn test(){
 }
 
 
+pub fn rem_first(value: &str) -> &str {
+  let mut chars = value.chars();
+  chars.next();
+  // chars.next_back();
+  chars.as_str()
+}
 
   rustdoc_find_consts_adapter_directly(&crate_rustdoc_path,&query_path);
 
