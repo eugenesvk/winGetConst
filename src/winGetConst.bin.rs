@@ -58,6 +58,25 @@ fn test(){
 
   rustdoc_find_consts_adapter_directly(&crate_rustdoc_path,&query_path);
 
+fn merge_this_with_ziggle() {
+  let ziggle_p       	:&Path	= Path::new("../winAPIconst/data/ziggle_clean64.txt");
+  let this_p         	:&Path	= Path::new("./data/winConst_Valid.txt");
+  let merged_p       	:&Path	= Path::new("./data/winConst_Valid_ziggle.txt");
+  let merged_f       	= File::create(&merged_p).unwrap();
+  let mut merged_buff	= BufWriter::new(merged_f);
+
+  let const_ziggle   	:HashMap<String,String> = get_const_kv_from(ziggle_p).unwrap();
+  let const_this     	:HashMap<String,String> = get_const_kv_from(this_p  ).unwrap();
+  let mut win32_const	:BTreeMap<String,String>	= BTreeMap::new();
+  for (c_name,c_val) in &const_this {
+    win32_const.insert(c_name.to_string(),c_val.to_string());};
+  for (c_name,c_val) in &const_ziggle {
+    if   !const_this.contains_key(c_name)	{win32_const.insert(c_name.to_string(),c_val.to_string());}};
+  for (c_name,c_val) in &win32_const {
+    merged_buff.write(format!("{}\t{}\n",c_name,c_val).as_bytes()).unwrap();};
+  merged_buff.flush().unwrap();
+}
+
 fn test1(){
   // let val:&str	= "5i32";
   // let my_num  	= parse_num_suffix(&val);
