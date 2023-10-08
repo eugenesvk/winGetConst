@@ -150,6 +150,22 @@ fn parse_lit_examples() { // BUGS with 27f32, parsed as integer
   // p!("{:?}",FloatLit::parse("20f32").expect("failed to parse as float literal"));
 }
 
+fn parse_num_suffix(num:&str) -> Result<String,()> {
+  use fancy_regex::Regex;
+  const num_type :&str	= r#"(?x:
+  (?<num>[0-9_]+)
+  (?<typ>.+)
+  )"#;
+  let re      	= Regex::new(num_type).unwrap();
+  let result  	= re.captures(num); // on 5i32
+  let captures	= result.expect("Error running regex");
+  match captures {
+    Some(groups)  	=> {match groups.name("num") { // 5
+      Some(gmatch)	=> Ok(gmatch.as_str().to_string()),
+      None        	=> Err(()),}},
+    None          	=> Err(()),
+  }
+}
   rustdoc_find_consts_adapter_directly(&crate_rustdoc_path,&query_path);
 
 pub const tab	:&[u8]	= "\t".as_bytes();
