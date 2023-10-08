@@ -1,3 +1,10 @@
+#![allow(unused_imports,unused_variables,unreachable_code,dead_code,non_upper_case_globals,non_snake_case)]
+extern crate helper;
+use std::path::PathBuf;
+use helper        	::*; // gets macros
+use helper::alias 	::*;
+use helper::helper	::*;
+
 use anyhow::Context;
 use std::collections::BTreeMap;
 use std::path::Path;
