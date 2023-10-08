@@ -30,6 +30,40 @@ pub fn rustdoc_type_as_str(type_:&rustdoc_types::Type) -> String {
     _                      	=> serde_json::to_string(&type_).unwrap(),
   }
 }
+pub fn rustdoc_const_value(val:&Option<String>,expr:&String,type_:&rustdoc_types::Type) -> String {
+  //               	       	            	// isLit	Value    	Expr       	Type
+  // const MIN     	: usize	= 16       ;	// true 	"16usize"	16         	{"primitive":"usize"}
+  // const MIN_SIZE	: usize	= MIN      ;	// false	"16usize"	"MIN"      	{"primitive":"usize"}
+  // const LOG_AS  	: &str 	= "batch"  ;	// true 	None     	"\"batch\""	{"borrowed_ref":{"lifetime":null,"mutable":false,"type":{"primitive":"str"}}}
+  // const YEAR    	: Years	= Years(42);	// false	None     	"_"        	{"resolved_path":{"name":"Years","id":"0:3:1633","args":{"angle_bracketed":{"args":[],"bindings":[]}}}}
+  // const ALS_C   	: ALS_T	= 12i32;    	// true 	"12i32"  	"12i32"    	ResolvedPath(Path{name:"ALS_T",id:Id("0:3:1661"),args:Some(AngleBracketed{args:[],bindings:[]})})
+  // const EXPR_2_2	: i32  	= 2 + 2    ;	// false	"4i32"   	"_"        	{"primitive":"i32"}
+  // const FN_FIVE 	: i32  	= five()   ;	// false	"5i32"   	"_"        	{"primitive":"i32"}
+  // const fn five() -> i32 { 5 };
+  // struct Years(i32);
+  // pub type ALS_T = i32;
+  use rustdoc_types::Type::*;
+  let     nonum	= "✗".to_string();
+  match type_ {
+    Primitive(s)              	=> match val {Some(v) => crate::parse_lit(&v), None => expr.to_string()}, // built in numeric (i*, u*, f*) types, bool, and char
+    // Primitive(s)           	=> match val {Some(v) => {p!("primt {:?} {:?} {:?}",&val,&expr,&type_); crate::parse_lit(&v)}, None => expr.to_string()}, // built in numeric (i*, u*, f*) types, bool, and char
+    BorrowedRef  {type_,..}   	=> rustdoc_const_value(&Some(expr.to_string()),&expr,&type_), //{"borrowed_ref":{"lifetime": "'static","mutable": false,"type":{"primitive":"str"}}},
+    RawPointer   {type_,..}   	=> rustdoc_const_value(&Some(expr.to_string()),&expr,&type_),
+    ResolvedPath(p)           	=> match val {Some(v) => crate::parse_lit(&v), None => expr.to_string()}, // {"resolved_path":{"name":"Years","id": "0:3:1633","args":{"angle_bracketed":{"args":[],"bindings":[]}}}},
+    // ResolvedPath(p)        	=> match val {Some(v) => {p!("respt {:?} {:?} {:?}",&val,&expr,&type_); crate::parse_lit(&v)}, None => expr.to_string()}, // {"resolved_path":{"name":"Years","id": "0:3:1633","args":{"angle_bracketed":{"args":[],"bindings":[]}}}},
+    QualifiedPath{name ,..}   	=> match val {Some(v) => crate::parse_lit(&v), None => expr.to_string()}, //??? todo
+    // QualifiedPath{name ,..}	=> match val {Some(v) => {p!("qualp {:?} {:?} {:?}",&val,&expr,&type_); crate::parse_lit(&v)}, None => expr.to_string()}, //??? todo
+    Generic(s)                	=> s.to_string(), //Parameterized types
+    // Slice(type_)           	=> rustdoc_const_value(&Some(expr.to_string()),&expr,&type_), //???todo
+    // Array{type_,..}        	=> rustdoc_const_value(&Some(expr.to_string()),&expr,&type_), //???todo
+    // DynTrait(DynTrait)     	=>,
+    // FunctionPointer(fp)    	, //Box<FunctionPointer>
+    // Tuple(vT)              	=>, //Vec<Type>
+    // ImplTrait(vGB)         	=>, //Vec<GenericBound>
+    // Infer                  	=>,
+    _                         	=> serde_json::to_string(&type_).unwrap(),
+  }
+}
   // fails with the wrong version of rustdocs (mismatching trustfall-rustdoc-adapter), so use trustfall_rustdoc that deals with versions wrapping various adapter: e.g., using v27 on v26 crate docs Error("unknown variant `typedef`, expected one of `module extern_crate import struct struct_field union enum variant function type_alias opaque_ty constant trait trait_alias impl static foreign_type macro proc_attribute proc_derive assoc_const assoc_type primitive keyword`", line: 19138, column: 29)'
   use trustfall_rustdoc_adapter::{Crate,IndexedCrate,RustdocAdapter};
   let crate_rustdoc_path = "./test_data/pub_module_level_const_missing_mod.json";
