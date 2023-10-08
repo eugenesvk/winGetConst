@@ -16,6 +16,156 @@ use crate::binmod::print42;
 use serde::{Deserialize, Serialize};
 use anyhow::Context;
 
+/*
+use cargo_semver_checks::RequiredSemverUpdate;
+lazy_static::lazy_static! {
+  static ref TEST_CRATE_NAMES: Vec<String> = get_test_crate_names();
+  /// Mapping test crate (pair) name -> (old rustdoc, new rustdoc).
+  static ref TEST_CRATE_RUSTDOCS: BTreeMap<String, (VersionedCrate, VersionedCrate)> =
+    get_test_crate_rustdocs();
+}
+/// A query that can be executed on a pair of rustdoc output files, returning instances of a particular kind of semver violation.
+#[non_exhaustive] #[derive(Debug, Clone, Serialize, Deserialize)] pub struct SemverQuery {
+                   	pub       	id                 	:        String,
+                   	pub(crate)	human_readable_name	:        String,
+                   	pub       	description        	:        String,
+                   	pub       	required_update    	: RequiredSemverUpdate,
+  #[serde(default)]	pub       	reference          	: Option<String>,
+  #[serde(default)]	pub       	reference_link     	: Option<String>,
+                   	pub(crate)	query              	:        String,
+  #[serde(default)]	pub(crate)	arguments          	: BTreeMap<String, TransparentValue>,
+  /// The top-level error describing the semver violation that was detected. Even if multiple instances of this semver issue are found, this error message is displayed only at most once.
+  pub(crate) error_message: String,
+  /// Optional template that can be combined with each query output to produce a human-readable description of the specific semver violation that was discovered.
+  #[serde(default)]  pub(crate) per_result_error_template: Option<String>,
+}
+impl SemverQuery {
+  pub fn all_queries() -> BTreeMap<String, SemverQuery> {
+    let mut queries = BTreeMap::default();
+    for query_text in get_query_text_contents() {
+      let query: SemverQuery = ron::from_str(query_text).unwrap_or_else(|e| {
+        panic!("Failed to parse a query: {e}```ron{query_text}```");});
+      let id_conflict = queries.insert(query.id.clone(), query);
+      assert!(id_conflict.is_none(), "{id_conflict:?}");
+    }
+    queries
+  }
+}
+
+fn get_test_crate_names() -> Vec<String> {
+  std::fs::read_dir("./test_crates/")
+    .expect("directory test_crates/ not found")
+    .map(|dir_entry| dir_entry.expect("failed to list test_crates/"))
+    .filter(|dir_entry| { // Only return directories inside `test_crates/` that contain an `old/Cargo.toml` file. This works around finicky git + cargo behavior:
+      // - Create a git branch, commit a new test case, and generate its rustdoc.
+      // - Cargo will then create `Cargo.lock` files for the crate, which are ignored by git
+      // - Check out another branch, and git won't delete the `Cargo.lock` files since they aren't tracked. But we don't want to run tests on those crates!
+      if !dir_entry.metadata().expect("failed to retrieve test_crates/ * metadata")
+        .is_dir() { return false;}
+      let mut test_crate_cargo_toml = dir_entry.path();
+      test_crate_cargo_toml.extend(["old", "Cargo.toml"]);
+      test_crate_cargo_toml.as_path().is_file()
+    })
+    .map(|dir_entry| {String::from(String::from(
+      dir_entry.path().to_str().expect("failed to convert dir_entry to String"),)
+      .strip_prefix("./test_crates/")
+      .expect("the dir_entry doesn't start with './test_crates/', which is unexpected",),)})
+    .collect()
+}
+
+fn load_pregenerated_rustdoc(crate_pair: &str, crate_version: &str) -> VersionedCrate {
+  let path = format!("./localdata/test_data/{crate_pair}/{crate_version}/rustdoc.json");
+  load_rustdoc(Path::new(&path))
+    .with_context(|| format!("Could not load {path} file, did you forget to run ./scripts/regenerate_test_rustdocs.sh ?"))
+    .expect("failed to load baseline rustdoc")
+}
+
+fn get_test_crate_rustdocs() -> BTreeMap<String, (VersionedCrate, VersionedCrate)> {
+  TEST_CRATE_NAMES.iter().map(|crate_pair| {
+    let old_rustdoc = load_pregenerated_rustdoc(crate_pair.as_str()	, "old");
+    let new_rustdoc = load_pregenerated_rustdoc(crate_pair         	,  "new");
+    (crate_pair.clone(), (old_rustdoc, new_rustdoc))
+  }).collect()
+}
+
+
+// use cargo_semver_checks::{GlobalConfig, PackageSelection, ReleaseType, Rustdoc, ScopeSelection,};
+// fn check_crate() -> anyhow::Result<()> {
+//   let old = "../semver-check/cargo-semver-checks-main/test_crates/pub_module_level_const_missing/old";
+//   let mut old_pb = PathBuf::new();
+//   old_pb.push(old);
+//   let baseline_root: Option<PathBuf> = Some(old_pb);
+//   let root = baseline_root.unwrap();
+
+//   // let custom_baseline = Some(Rustdoc::from_git_revision(root, baseline_rev));
+//   // if let Some(baseline) = custom_baseline { check.with_baseline(baseline); }
+
+//   let queries = SemverQuery::all_queries(); // gets macro-generated query-functions that read query .ron files
+//   // p!("{:?}",queries); //{"pub_module_level_const_missing": Se...
+//   for query in queries.values() {
+//     p!("{}",query.reference.as_deref().unwrap_or(query.description.as_str()));
+//   }
+//   let check_release = CheckRelease::new() ; //parsed by clap
+//   let check: cargo_semver_checks::Check = check_release.into();
+//     // CheckRelease { manifest: Manifest { manifest_path: None }
+//     // , workspace: Workspace { package: [], workspace: false, all: false, exclude: [] }
+//     // , current_rustdoc: None, baseline_version: None, baseline_rev: None, baseline_rustdoc: None, release_type: None, default_features: false
+//     // , only_explicit_features: false, features: [], baseline_features: [], current_features: [], all_features: false, verbosity: Verbosity { verbose: 0 , quiet: 0
+//     // , baseline_root: Some("../semver-check\\cargo-semver-checks-main\\test_crates\\pub_module_level_const_missing\\old")
+//     // , phantom: PhantomData<clap_verbosity_flag::InfoLevel> } }
+
+
+//   Ok(())
+
+
+
+
+
+//   // let new = "../semver-check/cargo-semver-checks-main/test_crates/pub_module_level_const_missing/new";
+
+//   // let query_name = "pub_module_level_const_missing";
+//   // let query_text = std::fs::read_to_string(format!("./src/lints/{query_name}.ron")).unwrap();
+//   // let semver_query: SemverQuery = ron::from_str(&query_text).unwrap();
+//   // let crate_pair_name = "hello".to_string();
+
+//   // let (crate_old, crate_new) = &TEST_CRATE_RUSTDOCS[&crate_pair_name];
+//   // p!("{:?}{:?}",crate_old,crate_new);
+//   // let indexed_crate_old = VersionedIndexedCrate::new(crate_old);
+//   // let indexed_crate_new = VersionedIndexedCrate::new(crate_new);
+//   // run_query_on_crate_pair(&semver_query,&crate_pair_name,&indexed_crate_new,&indexed_crate_old,);
+// }
+// cargo rustdoc -- -Zunstable-options --document-private-items --document-hidden-items --cap-lints "warn" --output-format=json
+// cargo rustdoc -- --document-private-items --cap-lints "warn" --output-format=json
+
+// fn run_query_on_crate_pair(semver_query:&SemverQuery, crate_pair_name:&String,
+//   indexed_crate_new: &VersionedIndexedCrate,
+//   indexed_crate_old: &VersionedIndexedCrate,) -> (String, Vec<BTreeMap<String, FieldValue>>) {
+//   let adapter = VersionedRustdocAdapter::new(indexed_crate_new,Some(indexed_crate_old)).expect("could not create adapter");
+//   let results_iter = adapter.run_query(&semver_query.query, semver_query.arguments.clone()).unwrap();
+//   (format!("./test_crates/{crate_pair_name}/"),
+//     results_iter
+//       .map(|res| res.into_iter().map(|(k, v)| (k.to_string(), v)).collect())
+//       .collect::<Vec<BTreeMap<_, _>>>(),
+//   )
+// }
+
+
+
+
+
+
+macro_rules! add_lints {
+  ($($name:ident,)*) => {
+    #[cfg(test)]
+    mod tests_lints {$(#[test]fn $name() {super::tests::check_query_execution(stringify!($name))})*}
+    fn get_query_text_contents() -> Vec<&'static str> {
+      vec![$(include_str!(concat!("query/", stringify!($name), ".ron")),)*]
+    }
+  }
+}
+
+add_lints!(pub_module_level_const_missing,);
+*/
 
 
 
