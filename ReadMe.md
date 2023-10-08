@@ -12,7 +12,7 @@ A work-in-progress and only partially successful attempt to find a relatively ea
 
 The parsing relied on a [Trustfall adapter library](https://docs.rs/trustfall-rustdoc-adapter) that parsed cargo docs, but those docs don't contain all the information, so the values for ~14k out of ~126k constants couldn't have been retrieved
 
-Resulting tab-separated data is at [windows_sys non-blank 112k constants](/raw/data/data/winConst_Valid_112k.txt.rar) and with added extra data from [a Ziggle tool](https://www.autohotkey.com/boards/viewtopic.php?f=83&t=99581) at [windows_sys+ziggle 175k constants](/raw/data/data/winConst_Valid_ziggle_175k.rar)
+Resulting tab-separated data is at [windows_sys non-blank 112k constants](../../raw/data/data/winConst_Valid_112k.txt.rar) and with added extra data from [a Ziggle tool](https://www.autohotkey.com/boards/viewtopic.php?f=83&t=99581) at [windows_sys+ziggle 175k constants](../../raw/data/data/winConst_Valid_ziggle_175k.rar)
 
 ## Install
 
