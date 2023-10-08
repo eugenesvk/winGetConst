@@ -11,7 +11,25 @@ use std::path::Path;
 use std::sync::Arc;
 use trustfall::{Schema, TryIntoStruct};
 
-pub fn rustdoc_find_consts_adapter_directly(crate_rustdoc_path:&Path,query_path:&Path) {
+pub fn rustdoc_type_as_str(type_:&rustdoc_types::Type) -> String {
+  use rustdoc_types::Type::*;
+  match type_ {
+    ResolvedPath(p)        	=> p.name.to_string(), // {"resolved_path":{"name":"Years","id": "0:3:1633","args":{"angle_bracketed":{"args":[],"bindings":[]}}}},
+    // DynTrait(DynTrait)  	=>,
+    Generic(s)             	=> s.to_string(),
+    Primitive(s)           	=> s.to_string(),
+    // FunctionPointer(fp) 	, //Box<FunctionPointer>
+    // Tuple(vT)           	=>, //Vec<Type>
+    Slice(type_)           	=> rustdoc_type_as_str(&type_),
+    Array{type_,..}        	=> rustdoc_type_as_str(&type_),
+    // ImplTrait(vGB)      	=>, //Vec<GenericBound>
+    // Infer               	=>,
+    RawPointer   {type_,..}	=> rustdoc_type_as_str(&type_),
+    BorrowedRef  {type_,..}	=> rustdoc_type_as_str(&type_), //{"borrowed_ref":{"lifetime": "'static","mutable": false,"type":{"primitive":"str"}}},
+    QualifiedPath{name ,..}	=> name.to_string(),
+    _                      	=> serde_json::to_string(&type_).unwrap(),
+  }
+}
   // fails with the wrong version of rustdocs (mismatching trustfall-rustdoc-adapter), so use trustfall_rustdoc that deals with versions wrapping various adapter: e.g., using v27 on v26 crate docs Error("unknown variant `typedef`, expected one of `module extern_crate import struct struct_field union enum variant function type_alias opaque_ty constant trait trait_alias impl static foreign_type macro proc_attribute proc_derive assoc_const assoc_type primitive keyword`", line: 19138, column: 29)'
   use trustfall_rustdoc_adapter::{Crate,IndexedCrate,RustdocAdapter};
   let crate_rustdoc_path = "./test_data/pub_module_level_const_missing_mod.json";
