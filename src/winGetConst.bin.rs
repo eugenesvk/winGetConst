@@ -137,6 +137,18 @@ pub fn parse_lit(num:&str) -> String {
     Err(ParseError) => "_".to_string(),
   }
 }
+fn parse_lit_examples() { // BUGS with 27f32, parsed as integer
+  let mylit	="5_000_000i64" 	; p!("{:?} \t→ {:?}",mylit,parse_lit(mylit));
+  let mylit	="-5_000_000i64"	; p!("{:?} \t→ {:?}",mylit,parse_lit(mylit));
+  let mylit	="2.1f32"       	; p!("{:?} \t→ {:?}",mylit,parse_lit(mylit));
+  let mylit	="-2.1f32"      	; p!("{:?} \t→ {:?}",mylit,parse_lit(mylit));
+  let mylit	="32f32"        	; p!("{:?} \t→ {:?}",mylit,parse_lit(mylit));
+  let mylit	="-32f32"       	; p!("{:?} \t→ {:?}",mylit,parse_lit(mylit));
+  // p!("{:?}","33".parse::<f32>());
+  // use litrs::{FloatLit};
+  // p!("{:?}",FloatLit::parse("27.0f32").expect("failed to parse as float literal"));
+  // p!("{:?}",FloatLit::parse("20f32").expect("failed to parse as float literal"));
+}
 
   rustdoc_find_consts_adapter_directly(&crate_rustdoc_path,&query_path);
 
