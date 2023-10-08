@@ -27,12 +27,6 @@ use std::{env,io::Write,iter::Peekable,time::Duration};
 pub mod trustfall_rustdoc_old;
 use trustfall_rustdoc_old::rustdoc_find_consts_adapter_directly;
 
-fn main() {
-  // check_crate().unwrap();
-  let crate_rustdoc_path	:&Path	= Path::new("./test_data/pub_module_level_const_missing_mod.json");
-  let query_path        	:&Path	= Path::new("./test_data/query_const.ron");
-  // let _ = rustdoc_find_consts(&crate_rustdoc_path,&query_path);
-
 pub fn generate_rustdoc() {
   // 1. install semver checks to generate json
   // cargo binstall cargo-semver-checks
@@ -166,7 +160,8 @@ fn parse_num_suffix(num:&str) -> Result<String,()> {
     None          	=> Err(()),
   }
 }
-  rustdoc_find_consts_adapter_directly(&crate_rustdoc_path,&query_path);
+
+
 
 pub fn get_const_kv_from(src:&Path) -> Result<HashMap<String,String>,Box<dyn std::error::Error>> {
   let mut win32_const:HashMap<String,String>	= HashMap::with_capacity(200_000 * 2);
@@ -265,4 +260,22 @@ fn test1(){
   let my_num  	= parse_lit(&val);
   p!("{:?} → {:?}",val,my_num);
 }
+
+fn main() {
+  // 1 Parses Windows_sys crate rustdocs generated via cargo-semver-checks and saves results to a simple tab-separated name⭾value⭾type file
+    // winConst_All.txt  	all constants
+    // winConst_Blank.txt	constants where values are blank (_) as they're not in the rustdocs
+    // winConst_Valid.txt	all non-blank constants
+  let crate_rustdoc_path 	:&Path	= Path::new("./test_data/pub_module_level_const_missing_mod.json"); // short crate to use for testing instead of the huge ↓
+  let crate_rustdoc_path 	:&Path	= Path::new("./test_data/windows_sys_0.48.0.json");
+  let query_path         	:&Path	= Path::new("./test_data/query_const.ron");
+  // let _ = rustdoc_find_consts_adapter_directly(&crate_rustdoc_path,&query_path);
+
+  // 2 Compares winConst files ↑ to a ziggle database and generates lists of differences (extra constants, missing constants, constants with different values)
+  // compare_this_to_ziggle();
+
+  // 3 Add missing constants from the ziggle database
+  // merge_this_with_ziggle();
+
+  // test1()
 }
