@@ -46,6 +46,11 @@ similar-asserts          	= {version="1.4.2",features=["serde"]}
   # ArrayVec : array-backed storage like vec (push/pop)
   # SliceVec : vec-like backed by your slice
 
+[patch.crates-io]
+# trustfall-rustdoc-adapter	= {git="https://github.com/eugenesvk/trustfall-rustdoc-adapter",branch="rusdoc-v26"}
+trustfall-rustdoc-adapter  	= {path="../trustfall-rustdoc-adapter"}
+# rustdoc-types            	= {path="../rustdoc-types"}
+
 [build-dependencies]
 log	= "0.4"
 
