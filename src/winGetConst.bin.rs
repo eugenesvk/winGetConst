@@ -168,6 +168,24 @@ fn parse_num_suffix(num:&str) -> Result<String,()> {
 }
   rustdoc_find_consts_adapter_directly(&crate_rustdoc_path,&query_path);
 
+pub fn get_const_kv_from(src:&Path) -> Result<HashMap<String,String>,Box<dyn std::error::Error>> {
+  let mut win32_const:HashMap<String,String>	= HashMap::with_capacity(200_000 * 2);
+
+  if let Ok(lines) = read_lines(src) {
+    for line in lines { // consumes iterator, returns an (Optional) String
+      if let Ok(val_tab_key) = line {	// WM_RENDERFORMAT 773
+        let val_key:Vec<&str> = val_tab_key.splitn(3,'\t').collect();
+        if val_key.len() >= 2 {
+          let (key,val)	= (val_key[0].to_string(),val_key[1].to_string()); //WM_RENDERFORMAT 773
+          // p!("{}={}",&key,&val);
+          win32_const.insert(key, val); // push original WM_RENDERFORMAT
+        }
+      }
+    }
+  }
+  Ok(win32_const)
+}
+
 pub const tab	:&[u8]	= "\t".as_bytes();
 pub const nl 	:&[u8]	= "\n".as_bytes();
 use std::fs  	::File;
