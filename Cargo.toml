@@ -19,17 +19,28 @@ path      	= "src/winGetConst.lib.rs"
 crate-type	= ['lib','cdylib']
 
 [dependencies]
-helper             	= {path="helper"}
-log                	= "0.4"
-stderrlog          	= "0.5"
-anyhow             	= "1.0"
-faccess            	= "0.2"
-trustfall_rustdoc  	= "0.13.1"
-trustfall          	= "0.6.1"
-serde              	= "1.0.188"
-cargo-semver-checks	= "0.23.0"
-ron                	= "0.8.1"
-lazy_static        	= "1.4.0"
+fancy-regex              	= "0.11.0"
+helper                   	= {path="helper"}
+log                      	= "0.4"
+stderrlog                	= "0.5"
+anyhow                   	= "1.0"
+faccess                  	= "0.2"
+# trustfall_rustdoc      	= "0.13.1"
+trustfall-rustdoc-adapter	= "26.2.2"
+trustfall                	= "0.6.1"
+# cargo-semver-checks    	= "0.23.0"
+rustdoc-types            	= "0.22.0"
+# Serialize              	#
+serde                    	= "1.0.188"
+serde_json               	= "1.0.107"
+# Formats                	#
+ron                      	= "0.8.1"
+# Parse                  	#
+litrs                    	= "0.4.0" # convert 1i32 literal from str to integer
+# Misc                   	#
+lazy_static              	= "1.4.0"
+# Test                   	#
+similar-asserts          	= {version="1.4.2",features=["serde"]}
 # Data types
 # tinyvec = {version="1.6.0",features=["rustc_1_40 ","cargo"]} # safe, panics on overflow
   # ArrayVec : array-backed storage like vec (push/pop)
