@@ -195,12 +195,12 @@ use std::fs  	::File;
 use std::io  	::{self,prelude::*,BufRead,BufWriter};
 fn compare_this_to_ziggle() {
   let ziggle_p          	:&Path	= Path::new("../winAPIconst/data/ziggle_clean64.txt");
-  let this_p            	:&Path	= Path::new("./winConst_Valid.txt");
-  let this_blank_p      	:&Path	= Path::new("./winConst_Blank.txt");
-  let log_p1            	:&Path	= Path::new("./winConst_vs_ziggle_extra.log");
-  let log_p2            	:&Path	= Path::new("./winConst_vs_ziggle_missing.log");
-  let log_p3            	:&Path	= Path::new("./winConst_vs_ziggle_blank.log");
-  let log_p4            	:&Path	= Path::new("./winConst_vs_ziggle_diff_value.log");
+  let this_p            	:&Path	= Path::new("./data/winConst_Valid.txt");
+  let this_blank_p      	:&Path	= Path::new("./data/winConst_Blank.txt");
+  let log_p1            	:&Path	= Path::new("./data/winConst_vs_ziggle_extra.log");
+  let log_p2            	:&Path	= Path::new("./data/winConst_vs_ziggle_missing.log");
+  let log_p3            	:&Path	= Path::new("./data/winConst_vs_ziggle_blank.log");
+  let log_p4            	:&Path	= Path::new("./data/winConst_vs_ziggle_diff_value.log");
   // if log_p1.is_file()	{return Err(format!("Aborting, file exists {:?}",log_p1).into())};
   // if log_p2.is_file()	{return Err(format!("Aborting, file exists {:?}",log_p2).into())};
   // if log_p3.is_file()	{return Err(format!("Aborting, file exists {:?}",log_p3).into())};
