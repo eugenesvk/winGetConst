@@ -6,8 +6,8 @@ Changelog.html
 ReadMe.html
 ToDo.html
 
-data
-test_data
+data/
+test_data/
 
 *.lnk
 
