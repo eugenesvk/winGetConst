@@ -1,3 +1,139 @@
+pub mod ddd {
+  pub type WIN32_ERROR = u32;
+}
+pub type HRESULT = i32;
+// pub type HSTRING = *mut ::core::ffi::c_void;
+// pub type IUnknown = *mut ::core::ffi::c_void;
+// pub type IInspectable = *mut ::core::ffi::c_void;
+pub type PSTR  	= *mut u8;
+pub type PWSTR 	= *mut u16;
+pub type PCSTR 	= *const u8;
+pub type PCWSTR	= *const u16;
+pub type BSTR  	= *const u16;
+
+pub type BrowserNavConstants = i32;
+
+pub const CRL_DIST_POINT_ERR_CRL_ISSUER_BIT: i32 = -2147483648i32; // overflows on naive litrs parsing
+pub const ERROR_DS_DRA_BAD_NC: ddd::WIN32_ERROR = 8440u32; // should remove ddd::
+pub const navReserved5: BrowserNavConstants = 536870912i32; // should parse through BrowserNavConstants=i32
+// @Windows_sys
+#[repr(C)] pub struct GUID {
+  pub data1: u32,
+  pub data2: u16,
+  pub data3: u16,
+  pub data4: [u8; 8],
+}
+impl ::core::marker::Copy for GUID {}
+impl ::core::clone::Clone for GUID {fn clone(&self) -> Self { *self }}
+impl GUID { pub const fn from_u128(uuid: u128) -> Self { Self {
+  data1: (uuid >> 96)         	as u32,
+  data2: (uuid >> 80 & 0xffff)	as u16,
+  data3: (uuid >> 64 & 0xffff)	as u16,
+  data4: (uuid                	as u64).to_be_bytes()
+  }}
+}
+pub const Dot11AdHocManager        	:GUID 	= GUID::from_u128(0xdd06a84f_83bd_4d01_8ab9_2389fea0869e);
+pub const IHV_INIT_VS_FUNCTION_NAME	:PCSTR	= s!("Dot11ExtIhvInitVirtualStation");
+// @ rustdoc for windows_sys ✗NOT enough info, NO value
+// Dot11AdHocManager → "constant":
+  // "type":{"resolved_path":{"name":"GUID","id":"0:19:1716","args":{"angle_bracketed":{"args":[],"bindings":[]}}}},
+  // "expr":"_",
+  // "value":null,
+  // "is_literal":false}
+// @ rustdoc for windows_sys ✗NOT enough info, NO value
+// IHV_INIT_VS_FUNCTION_NAME → "constant":
+  // {"type":{"resolved_path":{"name":"PCSTR","id":"0:13:1708","args":{"angle_bracketed":{"args":[],"bindings":[]}}}},
+  // "expr":"_",
+  // "value":"{alloc155:*constu8}",
+  // "is_literal":false}
+// @ziggle
+// IHV_INIT_VS_FUNCTION_NAME	Dot11ExhvInitVirtualStation
+
+
+  pub const fn five() -> i32 { 5 }
+  pub struct Years(i32);
+  trait MyTrait<const MIN: usize> {           // rustdocs default field
+    const NUM     : i32          = 16       ; // 16
+    const MIN_SIZE: usize        = MIN      ; // "MIN", referring to the other constant's name
+    const LOG_AS  : &'static str = "batch"  ; // "\"batch\"", including escaped quotes
+    const EXPR2_2 : i32          = 2+2      ; // "_"
+    const FN_FIVE : i32          = five()   ; // "_"
+    const YEAR    : Years        = Years(42); // "_"
+  }
+
+// @ windows_sys
+// pub const STR_ADDR_FMT       	:PCWSTR	= w!("(%02x:%02x:%02x:%02x:%02x:%02x)");
+// pub const STR_ADDR_FMTA      	:PCSTR 	= s!("(%02x:%02x:%02x:%02x:%02x:%02x)");
+// pub const STR_ADDR_FMTW      	:PCWSTR	= w!("(%02x:%02x:%02x:%02x:%02x:%02x)");
+// pub const STR_ADDR_SHORT_FMTA	:PCSTR 	= s!("%04x%08x");
+// pub const STR_ADDR_SHORT_FMTW	:PCWSTR	= w!("%04x%08x");
+// pub const STR_ADDR_SHORT_FMT 	:PCWSTR	= w!("%04x%08x");
+  // format code "%04X"
+  // X means that it will print an integer, in hexadecimal, large X for large hexadecimal letters
+  // 4 means the number will be printed left justified with at least four digits, print spaces if there is less than four digits
+  // 0 means that if there is less than four digits it will print leading zeroes.
+// @ziggle
+// STR_ADDR_FMTA      		(%02x:%02x:%02x:%02x:%02x:%02x)
+// STR_ADDR_FMTW      		(%02x:%02x:%02x:%02x:%02x:%02x)
+// STR_ADDR_SHORT_FMTA		%04x%08x
+// STR_ADDR_SHORT_FMTW		%04x%08x
+
+
+// struct Years(i32);
+// const fn five() -> i32 { 5 }
+// pub const MIN                                 	: usize       	= 11     ;
+// pub const PUB_CONST_IN_GLOBAL_SIZE            	: usize       	= 16     ;
+// pub const PUB_CONST_IN_GLOBAL_LOG_AS          	: &        str	= "batch";
+// pub const PUB_CONST_IN_GLOBAL_LOG_ASS         	: &'static str	= "batch";
+// pub const PUB_CONST_IN_GLOBAL_MIN_SIZE        	: usize       	= MIN    ;
+// pub const PUB_CONST_IN_GLOBAL_EXPR2_2         	: i32         	= 2+2    ;
+// pub const PUB_CONST_IN_GLOBAL_FN_FIVE         	: i32         	= five() ;
+// pub const PUB_CONST_IN_GLOBAL                 	: i32         	= 54321  ;
+// pub const PUB_CONST_IN_GLOBAL_WILL_REMOVE     	: i32         	= 981    ;
+// pub const PUB_CONST_IN_GLOBAL_WILL_CHANGE_VAL 	: i32         	= 982    ;
+// pub const PUB_CONST_IN_GLOBAL_WILL_CHANGE_TYPE	: Years       	= Years(5312);
+// // pub const PUB_CONST_IN_GLOBAL_WILL_RENAME: i32 = 0;
+// // pub const PUB_CONST_IN_GLOBAL_WILL_BE_STATIC: i32 = 0;
+// // pub const PUB_CONST_IN_GLOBAL_WILL_BE_PRIVATE_CONST: i32 = 0;
+// // pub const PUB_CONST_IN_GLOBAL_WILL_BE_PRIVATE_STATIC: i32 = 0;
+
+// trait BatchIterator<const MIN: usize> {
+//   const ASSOC_CONST_MIN                       	: usize       	= 11     ;
+//   const ASSOC_CONST_IN_GLOBAL_SIZE            	: usize       	= 16     ;
+//   const ASSOC_CONST_IN_GLOBAL_LOG_ASS         	: &'static str	= "batch";
+//   const ASSOC_CONST_IN_GLOBAL_MIN_SIZE        	: usize       	= MIN    ;
+//   const ASSOC_CONST_IN_GLOBAL_EXPR2_2         	: i32         	= 2+2    ;
+//   const ASSOC_CONST_IN_GLOBAL_FN_FIVE         	: i32         	= five() ;
+//   const ASSOC_CONST_IN_GLOBAL                 	: i32         	= 54321  ;
+//   const ASSOC_CONST_IN_GLOBAL_WILL_REMOVE     	: i32         	= 981    ;
+//   const ASSOC_CONST_IN_GLOBAL_WILL_CHANGE_VAL 	: i32         	= 982    ;
+//   const ASSOC_CONST_IN_GLOBAL_WILL_CHANGE_TYPE	: Years       	= Years(5312);
+// }
+
+// pub mod my_module {
+//     pub const PUB_CONST_IN_MODULE: i32 = 0;
+//     pub const PUB_CONST_IN_MODULE_WILL_REMOVE: i32 = 0;
+//     pub const PUB_CONST_IN_MODULE_WILL_RENAME: i32 = 0;
+//     pub const PUB_CONST_IN_MODULE_WILL_BE_STATIC: i32 = 0;
+//     pub const PUB_CONST_IN_MODULE_WILL_BE_PRIVATE_CONST: i32 = 0;
+//     pub const PUB_CONST_IN_MODULE_WILL_BE_PRIVATE_STATIC: i32 = 0;
+//     pub const PUB_CONST_IN_MODULE_WILL_RE_EXPORT: i32 = 0;
+//     pub const PUB_CONST_IN_MODULE_WILL_RE_EXPORT_STATIC: i32 = 0;
+
+//     pub mod my_module_nested {
+//         pub const PUB_CONST_IN_NESTED_MODULE: i32 = 0;
+//         pub const PUB_CONST_IN_NESTED_MODULE_WILL_REMOVE: i32 = 0;
+//         pub const PUB_CONST_IN_NESTED_MODULE_WILL_RENAME: i32 = 0;
+//         pub const PUB_CONST_IN_NESTED_MODULE_WILL_BE_STATIC: i32 = 0;
+//         pub const PUB_CONST_IN_NESTED_MODULE_WILL_BE_PRIVATE_CONST: i32 = 0;
+//         pub const PUB_CONST_IN_NESTED_MODULE_WILL_BE_PRIVATE_STATIC: i32 = 0;
+//         pub const PUB_CONST_IN_NESTED_MODULE_WILL_RE_EXPORT: i32 = 0;
+//         pub const PUB_CONST_IN_NESTED_MODULE_WILL_RE_EXPORT_STATIC: i32 = 0;
+//     }
+// }
+
+
+
 pub mod core {
   #[doc(hidden)] pub const fn decode_utf8_char(bytes: &[u8], mut pos: usize) -> Option<(u32, usize)> {
     if bytes.len() == pos {
@@ -102,127 +238,3 @@ pub mod core {
         OUTPUT.as_ptr()
     }};
 }
-
-pub mod ddd {
-  pub type WIN32_ERROR = u32;
-}
-pub type HRESULT = i32;
-// pub type HSTRING = *mut ::core::ffi::c_void;
-// pub type IUnknown = *mut ::core::ffi::c_void;
-// pub type IInspectable = *mut ::core::ffi::c_void;
-pub type PSTR  	= *mut u8;
-pub type PWSTR 	= *mut u16;
-pub type PCSTR 	= *const u8;
-pub type PCWSTR	= *const u16;
-pub type BSTR  	= *const u16;
-
-pub type BrowserNavConstants = i32;
-
-pub const CRL_DIST_POINT_ERR_CRL_ISSUER_BIT: i32 = -2147483648i32; // overflows on naive litrs parsing
-pub const ERROR_DS_DRA_BAD_NC: ddd::WIN32_ERROR = 8440u32; // should remove ddd::
-pub const navReserved5: BrowserNavConstants = 536870912i32; // should parse through BrowserNavConstants=i32
-// @Windows_sys
-#[repr(C)] pub struct GUID {
-  pub data1: u32,
-  pub data2: u16,
-  pub data3: u16,
-  pub data4: [u8; 8],
-}
-impl ::core::marker::Copy for GUID {}
-impl ::core::clone::Clone for GUID {fn clone(&self) -> Self { *self }}
-impl GUID { pub const fn from_u128(uuid: u128) -> Self { Self {
-  data1: (uuid >> 96)         	as u32,
-  data2: (uuid >> 80 & 0xffff)	as u16,
-  data3: (uuid >> 64 & 0xffff)	as u16,
-  data4: (uuid                	as u64).to_be_bytes()
-  }}
-}
-pub const Dot11AdHocManager        	:GUID 	= GUID::from_u128(0xdd06a84f_83bd_4d01_8ab9_2389fea0869e);
-pub const IHV_INIT_VS_FUNCTION_NAME	:PCSTR	= s!("Dot11ExtIhvInitVirtualStation");
-// @ rustdoc for windows_sys ✗NOT enough info, NO value
-// Dot11AdHocManager → "constant":
-  // "type":{"resolved_path":{"name":"GUID","id":"0:19:1716","args":{"angle_bracketed":{"args":[],"bindings":[]}}}},
-  // "expr":"_",
-  // "value":null,
-  // "is_literal":false}
-// @ rustdoc for windows_sys ✗NOT enough info, NO value
-// IHV_INIT_VS_FUNCTION_NAME → "constant":
-  // {"type":{"resolved_path":{"name":"PCSTR","id":"0:13:1708","args":{"angle_bracketed":{"args":[],"bindings":[]}}}},
-  // "expr":"_",
-  // "value":"{alloc155:*constu8}",
-  // "is_literal":false}
-// @ziggle
-// IHV_INIT_VS_FUNCTION_NAME	Dot11ExhvInitVirtualStation
-
-
-
-// @ windows_sys
-// pub const STR_ADDR_FMT       	:PCWSTR	= w!("(%02x:%02x:%02x:%02x:%02x:%02x)");
-// pub const STR_ADDR_FMTA      	:PCSTR 	= s!("(%02x:%02x:%02x:%02x:%02x:%02x)");
-// pub const STR_ADDR_FMTW      	:PCWSTR	= w!("(%02x:%02x:%02x:%02x:%02x:%02x)");
-// pub const STR_ADDR_SHORT_FMTA	:PCSTR 	= s!("%04x%08x");
-// pub const STR_ADDR_SHORT_FMTW	:PCWSTR	= w!("%04x%08x");
-// pub const STR_ADDR_SHORT_FMT 	:PCWSTR	= w!("%04x%08x");
-  // format code "%04X"
-  // X means that it will print an integer, in hexadecimal, large X for large hexadecimal letters
-  // 4 means the number will be printed left justified with at least four digits, print spaces if there is less than four digits
-  // 0 means that if there is less than four digits it will print leading zeroes.
-// @ziggle
-// STR_ADDR_FMTA      		(%02x:%02x:%02x:%02x:%02x:%02x)
-// STR_ADDR_FMTW      		(%02x:%02x:%02x:%02x:%02x:%02x)
-// STR_ADDR_SHORT_FMTA		%04x%08x
-// STR_ADDR_SHORT_FMTW		%04x%08x
-
-
-// struct Years(i32);
-// const fn five() -> i32 { 5 }
-// pub const MIN                                 	: usize       	= 11     ;
-// pub const PUB_CONST_IN_GLOBAL_SIZE            	: usize       	= 16     ;
-// pub const PUB_CONST_IN_GLOBAL_LOG_AS          	: &        str	= "batch";
-// pub const PUB_CONST_IN_GLOBAL_LOG_ASS         	: &'static str	= "batch";
-// pub const PUB_CONST_IN_GLOBAL_MIN_SIZE        	: usize       	= MIN    ;
-// pub const PUB_CONST_IN_GLOBAL_EXPR2_2         	: i32         	= 2+2    ;
-// pub const PUB_CONST_IN_GLOBAL_FN_FIVE         	: i32         	= five() ;
-// pub const PUB_CONST_IN_GLOBAL                 	: i32         	= 54321  ;
-// pub const PUB_CONST_IN_GLOBAL_WILL_REMOVE     	: i32         	= 981    ;
-// pub const PUB_CONST_IN_GLOBAL_WILL_CHANGE_VAL 	: i32         	= 982    ;
-// pub const PUB_CONST_IN_GLOBAL_WILL_CHANGE_TYPE	: Years       	= Years(5312);
-// // pub const PUB_CONST_IN_GLOBAL_WILL_RENAME: i32 = 0;
-// // pub const PUB_CONST_IN_GLOBAL_WILL_BE_STATIC: i32 = 0;
-// // pub const PUB_CONST_IN_GLOBAL_WILL_BE_PRIVATE_CONST: i32 = 0;
-// // pub const PUB_CONST_IN_GLOBAL_WILL_BE_PRIVATE_STATIC: i32 = 0;
-
-// trait BatchIterator<const MIN: usize> {
-//   const ASSOC_CONST_MIN                       	: usize       	= 11     ;
-//   const ASSOC_CONST_IN_GLOBAL_SIZE            	: usize       	= 16     ;
-//   const ASSOC_CONST_IN_GLOBAL_LOG_ASS         	: &'static str	= "batch";
-//   const ASSOC_CONST_IN_GLOBAL_MIN_SIZE        	: usize       	= MIN    ;
-//   const ASSOC_CONST_IN_GLOBAL_EXPR2_2         	: i32         	= 2+2    ;
-//   const ASSOC_CONST_IN_GLOBAL_FN_FIVE         	: i32         	= five() ;
-//   const ASSOC_CONST_IN_GLOBAL                 	: i32         	= 54321  ;
-//   const ASSOC_CONST_IN_GLOBAL_WILL_REMOVE     	: i32         	= 981    ;
-//   const ASSOC_CONST_IN_GLOBAL_WILL_CHANGE_VAL 	: i32         	= 982    ;
-//   const ASSOC_CONST_IN_GLOBAL_WILL_CHANGE_TYPE	: Years       	= Years(5312);
-// }
-
-// pub mod my_module {
-//     pub const PUB_CONST_IN_MODULE: i32 = 0;
-//     pub const PUB_CONST_IN_MODULE_WILL_REMOVE: i32 = 0;
-//     pub const PUB_CONST_IN_MODULE_WILL_RENAME: i32 = 0;
-//     pub const PUB_CONST_IN_MODULE_WILL_BE_STATIC: i32 = 0;
-//     pub const PUB_CONST_IN_MODULE_WILL_BE_PRIVATE_CONST: i32 = 0;
-//     pub const PUB_CONST_IN_MODULE_WILL_BE_PRIVATE_STATIC: i32 = 0;
-//     pub const PUB_CONST_IN_MODULE_WILL_RE_EXPORT: i32 = 0;
-//     pub const PUB_CONST_IN_MODULE_WILL_RE_EXPORT_STATIC: i32 = 0;
-
-//     pub mod my_module_nested {
-//         pub const PUB_CONST_IN_NESTED_MODULE: i32 = 0;
-//         pub const PUB_CONST_IN_NESTED_MODULE_WILL_REMOVE: i32 = 0;
-//         pub const PUB_CONST_IN_NESTED_MODULE_WILL_RENAME: i32 = 0;
-//         pub const PUB_CONST_IN_NESTED_MODULE_WILL_BE_STATIC: i32 = 0;
-//         pub const PUB_CONST_IN_NESTED_MODULE_WILL_BE_PRIVATE_CONST: i32 = 0;
-//         pub const PUB_CONST_IN_NESTED_MODULE_WILL_BE_PRIVATE_STATIC: i32 = 0;
-//         pub const PUB_CONST_IN_NESTED_MODULE_WILL_RE_EXPORT: i32 = 0;
-//         pub const PUB_CONST_IN_NESTED_MODULE_WILL_RE_EXPORT_STATIC: i32 = 0;
-//     }
-// }
