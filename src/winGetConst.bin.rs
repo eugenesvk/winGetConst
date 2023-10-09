@@ -31,7 +31,9 @@ pub fn generate_rustdoc() {
   // 1. install semver checks to generate json
   // cargo binstall cargo-semver-checks
   // 2. generate json for the latest Windows sys crate version
-  // cargo semver-checks --manifest-path r'path/to/cargo/registry/src/github.com-1ecc6299db9ec823/windows-sys-0.48.0/Cargo.toml' --baseline-version 0.45.0
+  // manifest_p = r'path/to/cargo/registry/src/github.com-1ecc6299db9ec823/windows-sys-0.48.0/Cargo.toml'
+  // cargo semver-checks --manifest-path @(manifest_p) --baseline-root @(manifest_p)
+  // get results from ./cache/cargo/semver-checks/target/doc
   // 3. use rustdoc_find_consts_adapter_directly to parse that json
 
   // ↓ simpler way to generate docs with cargo?
