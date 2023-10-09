@@ -10,9 +10,11 @@ pub type PWSTR 	= *mut u16;
 pub type PCSTR 	= *const u8;
 pub type PCWSTR	= *const u16;
 pub type BSTR  	= *const u16;
+pub type SOCKET = usize;
 
 pub type BrowserNavConstants = i32;
 
+pub const INVALID_SOCKET: SOCKET = -1i32 as _;
 pub const CRL_DIST_POINT_ERR_CRL_ISSUER_BIT: i32 = -2147483648i32; // overflows on naive litrs parsing
 pub const ERROR_DS_DRA_BAD_NC: ddd::WIN32_ERROR = 8440u32; // should remove ddd::
 pub const navReserved5: BrowserNavConstants = 536870912i32; // should parse through BrowserNavConstants=i32
