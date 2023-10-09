@@ -1,7 +1,6 @@
 SemverQuery(id     	: "query_const",
 human_readable_name	: "list Constants and their data",
 description        	: "A pub const query",
-required_update    	: Major,
 reference_link     	: None,
 query : r#"{Crate { # List 'public' constants, their expr/values
 item {
