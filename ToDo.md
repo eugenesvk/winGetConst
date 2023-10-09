@@ -1,4 +1,3 @@
-- wait until constant adapter is added [fr](https://github.com/obi1kenobi/cargo-semver-checks/issues/366) to `cargo-semver-checks` so that you can get type/value of a constant in addition to its name, then switch to `trustfall_rustdoc` that manages versioned docs
 - wait until `rustdoc_types::Type` support is added to [trustfall-rustdoc-adapter](https://github.com/obi1kenobi/trustfall-rustdoc-adapter) and replace getting constant type via ID with a direct query of a `type` property
 
 Alternative ways to get all the contstants
