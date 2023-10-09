@@ -86,24 +86,29 @@ pub fn parse_lit(num:&str) -> String {
     Ok(lit) => { match lit {
       // 27f32 bugs as an integer https://github.com/LukasKalbertodt/litrs/issues/14
       Literal::Integer	(lit) => { //https://doc.rust-lang.org/stable/std/primitive/index.html
+        // avoids matching by suffix, use max Unsigned value to avoid overflowing of -MAXu128
+        match lit.value::<u128>().map(|n| n.to_string()) {Some(n) => sign + &n.to_string(), None => nonum}
+
+        // match lit.value::<u128>()	{Some(n) => sign + &n.to_string(), None => nonum},
         // p!("Integer raw_input {:?}",lit.raw_input());
         // todo: change to proper types one weird Rust bug can be avoided witn a .lenient version
         // https://docs.rs/litrs/latest/litrs/struct.IntegerLit.html
+        /*
         match lit.suffix() {
            // ↓ would become floats?
-           "f32" 	=> match lit.value::< u32>() 	{Some(n) => sign + &n.to_string(), None => nonum},
-           "f64" 	=> match lit.value::< u64>() 	{Some(n) => sign + &n.to_string(), None => nonum},
+           "f32"	=> match lit.value::< u32>()	{Some(n) => sign + &n.to_string(), None => nonum},
+           "f64"	=> match lit.value::< u64>()	{Some(n) => sign + &n.to_string(), None => nonum},
            // ↓ −128i8 would overflow without the sing: 128i8 doesn't fit the max 127i8
          //  "i8"	=> match lit.value::<  i8>() 	{Some(n) => sign + &n.to_string(), None => nonum},
          // "i16"	=> match lit.value::< i16>() 	{Some(n) => sign + &n.to_string(), None => nonum},
          // "i32"	=> match lit.value::< i32>() 	{Some(n) => sign + &n.to_string(), None => nonum},
          // "i64"	=> match lit.value::< i64>() 	{Some(n) => sign + &n.to_string(), None => nonum},
-            "i8" 	=> match lit.value::< i64>() 	{Some(n) => sign + &n.to_string(), None => nonum},
-           "i16" 	=> match lit.value::< i64>() 	{Some(n) => sign + &n.to_string(), None => nonum},
-           "i32" 	=> match lit.value::< i64>() 	{Some(n) => sign + &n.to_string(), None => nonum},
-           "i64" 	=> match lit.value::< i64>() 	{Some(n) => sign + &n.to_string(), None => nonum},
-          "i128" 	=> match lit.value::<i128>() 	{Some(n) => sign + &n.to_string(), None => nonum},
-          "isize"	=> match lit.value::<isize>()	{Some(n) => sign + &n.to_string(), None => nonum},
+            "i8" 	=> match lit.value::<  u8>() 	{Some(n) => sign + &n.to_string(), None => nonum},
+           "i16" 	=> match lit.value::< u16>() 	{Some(n) => sign + &n.to_string(), None => nonum},
+           "i32" 	=> match lit.value::< u32>() 	{Some(n) => sign + &n.to_string(), None => nonum},
+           "i64" 	=> match lit.value::< u64>() 	{Some(n) => sign + &n.to_string(), None => nonum},
+          "i128" 	=> match lit.value::<u128>() 	{Some(n) => sign + &n.to_string(), None => nonum},
+          "isize"	=> match lit.value::<usize>()	{Some(n) => sign + &n.to_string(), None => nonum},
             "u8" 	=> match lit.value::<  u8>() 	{Some(n) => sign + &n.to_string(), None => nonum},
            "u16" 	=> match lit.value::< u16>() 	{Some(n) => sign + &n.to_string(), None => nonum},
            "u32" 	=> match lit.value::< u32>() 	{Some(n) => sign + &n.to_string(), None => nonum},
@@ -111,9 +116,10 @@ pub fn parse_lit(num:&str) -> String {
           "u128" 	=> match lit.value::<u128>() 	{Some(n) => sign + &n.to_string(), None => nonum},
           "usize"	=> match lit.value::<usize>()	{Some(n) => sign + &n.to_string(), None => nonum},
           ""     	=> match lit.value::< u64>() 	{Some(n) => sign + &n.to_string(), None => nonum},
-          // _   	=> match lit.value::<u128>() 	{Some(n) => n.to_string(), None => nonum},
+          // _   	=> match lit.value::<u128>() 	{Some(n) => sign + &n.to_string(), None => nonum},
           _      	=> nonum,
-        }}
+        }*/
+      }
       Literal::Float	(lit) => {
         // p!("Float part {:?}",lit.number_part());
         match lit.suffix() {
@@ -256,8 +262,10 @@ fn test1(){
   // let my_num  	= parse_num_suffix(&val);
   // p!("{:?} → {:?}",val,my_num.unwrap());
   // const LOG_AS  : &str = "batch"  ; // true None `"\"batch\""` including escaped quotes
-  let val:&str	= "-2147483648i32";
-  let my_num  	= parse_lit(&val);
+  // let val:&str	= "-2147483648i32";
+  let val:&str   	= "-170_141_183_460_469_231_731_687_303_715_884_105_728i128";
+  let val:&str   	= "-9_223_372_036_854_775_808i64";
+  let my_num     	= parse_lit(&val);
   p!("{:?} → {:?}",val,my_num);
 }
 
