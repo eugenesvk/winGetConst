@@ -668,10 +668,11 @@ dependencies = [
 
 [[package]]
 name = "trustfall-rustdoc-adapter"
-version = "26.2.2"
+version = "26.2.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3fbdccb0145e51ed535c4b655c9f35b0705a0962f1bc6dca8ec864f09e8e4022"
 dependencies = [
  "rustdoc-types",
- "serde_json",
  "trustfall",
 ]
 
