@@ -172,6 +172,8 @@ fn parse_num_suffix(num:&str) -> Result<String,()> {
 
 
 pub fn get_const_kv_from(src:&Path) -> Result<HashMap<String,String>,Box<dyn std::error::Error>> {
+  if !src.exists() {p!("Couldn't find {:?}",src); std::process::exit(1)};
+
   let mut win32_const:HashMap<String,String>	= HashMap::with_capacity(200_000 * 2);
 
   if let Ok(lines) = read_lines(src) {
@@ -186,6 +188,7 @@ pub fn get_const_kv_from(src:&Path) -> Result<HashMap<String,String>,Box<dyn std
       }
     }
   }
+  p!("Returning a HashMap of ‘{}’ elements from ‘{:?}’",win32_const.len(),&src);
   Ok(win32_const)
 }
 
