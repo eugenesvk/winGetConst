@@ -14,7 +14,6 @@ use crate::binmod::print42;
 
 use serde::{Deserialize, Serialize};
 use anyhow::Context;
-use trustfall::{FieldValue,TransparentValue};
 
 
 
