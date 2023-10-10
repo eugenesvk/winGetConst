@@ -1,8 +1,8 @@
 mod cfg;
-mod classes;
+// mod classes;
 mod com_methods;
 mod constants;
-mod delegates;
+// mod delegates;
 mod enums;
 mod extensions;
 // mod functions;
@@ -174,9 +174,9 @@ fn namespace(writer: &Writer, tree: &Tree) -> String {
                 let kind = writer.reader.type_def_kind(def);
                 match kind {
                     TypeKind::Class => {
-                        if writer.reader.type_def_flags(def).contains(TypeAttributes::WindowsRuntime) {
-                            types.entry(kind).or_default().insert(name, classes::writer(writer, def));
-                        }
+                        // if writer.reader.type_def_flags(def).contains(TypeAttributes::WindowsRuntime) {
+                            // types.entry(kind).or_default().insert(name, classes::writer(writer, def));
+                        // }
                     }
                     TypeKind::Interface => types.entry(kind).or_default().entry(name).or_default().combine(&interfaces::writer(writer, def)),
                     TypeKind::Enum => types.entry(kind).or_default().entry(name).or_default().combine(&enums::writer(writer, def)),
@@ -198,7 +198,7 @@ fn namespace(writer: &Writer, tree: &Tree) -> String {
                         }
                         types.entry(kind).or_default().entry(name).or_default().combine(&structs::writer(writer, def));
                     }
-                    TypeKind::Delegate => types.entry(kind).or_default().entry(name).or_default().combine(&delegates::writer(writer, def)),
+                    TypeKind::Delegate => {}, //types.entry(kind).or_default().entry(name).or_default().combine(&delegates::writer(writer, def)),
                 }
             }
             #[allow(unused_variables)] Item::Fn(def, namespace) => {
