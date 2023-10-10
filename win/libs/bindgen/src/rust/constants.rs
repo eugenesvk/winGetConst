@@ -1,4 +1,10 @@
 use super::*;
+extern crate helper;
+#[allow(unused_imports)] use helper        	::*; // gets macros
+#[allow(unused_imports)] use helper::alias 	::*;
+#[allow(unused_imports)] use helper::helper	::*;
+#[allow(unused_imports)] use helper::fs    	::*;
+#[allow(unused_imports)] use helper::parser	::*;
 
 pub fn writer(writer: &Writer, def: Field) -> TokenStream {
     let name = to_ident(writer.reader.field_name(def));

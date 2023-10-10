@@ -1,4 +1,11 @@
 #![allow(unused_variables,dead_code)]
+extern crate helper;
+#[allow(unused_imports)] use helper        	::*; // gets macros
+#[allow(unused_imports)] use helper::alias 	::*;
+#[allow(unused_imports)] use helper::helper	::*;
+#[allow(unused_imports)] use helper::fs    	::*;
+#[allow(unused_imports)] use helper::parser	::*;
+
 mod cfg;
 // mod classes;
 mod com_methods;
