@@ -7,13 +7,11 @@ extern crate helper;
 #[allow(unused_imports)] use helper::parser	::*;
 
 mod cfg;
-// mod classes;
 mod com_methods;
 mod constants;
 // mod delegates;
 mod enums;
 mod extensions;
-// mod functions;
 mod handles;
 mod implements;
 // mod interfaces;
