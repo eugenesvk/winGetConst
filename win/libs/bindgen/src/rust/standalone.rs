@@ -66,13 +66,13 @@ pub fn standalone_imp(writer: &Writer) -> String {
                         // }
                     }
                     TypeKind::Interface => {
-                        let name = writer.reader.type_def_name(def);
-                        if writer.sys {
-                            let ident = to_ident(name);
-                            sorted.insert(name, quote! { pub type #ident = *mut ::core::ffi::c_void; });
-                        } else {
-                            sorted.insert(name, interfaces::writer(writer, def));
-                        }
+                        // let name = writer.reader.type_def_name(def);
+                        // if writer.sys {
+                        //     let ident = to_ident(name);
+                        //     sorted.insert(name, quote! { pub type #ident = *mut ::core::ffi::c_void; });
+                        // } else {
+                        //     sorted.insert(name, interfaces::writer(writer, def));
+                        // }
                     }
                     TypeKind::Enum => {
                         // sorted.insert(writer.reader.type_def_name(def), enums::writer(writer, def));
