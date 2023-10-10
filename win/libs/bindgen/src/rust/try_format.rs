@@ -20,7 +20,7 @@ pub fn try_format(writer: &super::Writer, tokens: &str) -> String {
     // let tokens = format!("{preamble}{allow}{tokens}");
     let tokens = format!("{tokens}");
 
-    let Ok(mut child) = std::process::Command::new("rustfmt").stdin(std::process::Stdio::piped()).stdout(std::process::Stdio::piped()).stderr(std::process::Stdio::null()).spawn() else {
+    let Ok(mut child) = std::process::Command::new("rustfmt").args(["--config","use_small_heuristics=Off,max_width=50000"]).stdin(std::process::Stdio::piped()).stdout(std::process::Stdio::piped()).stderr(std::process::Stdio::null()).spawn() else {
         return tokens;
     };
 
