@@ -75,7 +75,7 @@ pub fn standalone_imp(writer: &Writer) -> String {
                         }
                     }
                     TypeKind::Enum => {
-                        sorted.insert(writer.reader.type_def_name(def), enums::writer(writer, def));
+                        // sorted.insert(writer.reader.type_def_name(def), enums::writer(writer, def));
                     }
                     TypeKind::Struct => {
                         // let name = writer.reader.type_def_name(def);
