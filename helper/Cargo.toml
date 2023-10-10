@@ -6,7 +6,9 @@ edition    	= "2021"
 license    	= "MIT"
 
 [dependencies]
-# bitflags  	= "2.3.3"
+# Parse       	#
+litrs         	= "0.4.0" # convert 1i32 literal from str to integer
+# bitflags    	= "2.3.3"
 # indexmap    	= "2.0.0"
 # aho-corasick	= "1.0.5"
 # chrono      	= "0.4.31"
