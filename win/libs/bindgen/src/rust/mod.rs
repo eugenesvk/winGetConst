@@ -204,7 +204,7 @@ fn namespace(writer: &Writer, tree: &Tree) -> String {
                     TypeKind::Delegate => {}, //types.entry(kind).or_default().entry(name).or_default().combine(&delegates::writer(writer, def)),
                 }
             }
-            #[allow(unused_variables)] Item::Fn(def, namespace) => {
+            Item::Fn(def, namespace) => {
                 // let name = writer.reader.method_def_name(def);
                 // functions.entry(name).or_default().combine(&functions::writer(writer, &namespace, def));
             }
