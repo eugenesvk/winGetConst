@@ -78,22 +78,22 @@ pub fn standalone_imp(writer: &Writer) -> String {
                         sorted.insert(writer.reader.type_def_name(def), enums::writer(writer, def));
                     }
                     TypeKind::Struct => {
-                        let name = writer.reader.type_def_name(def);
-                        if writer.reader.type_def_fields(def).next().is_none() {
-                            if let Some(guid) = type_def_guid(writer.reader, def) {
-                                let ident = to_ident(name);
-                                let value = writer.guid(&guid);
-                                let guid = writer.type_name(&Type::GUID);
-                                sorted.insert(
-                                    name,
-                                    quote! {
-                                        pub const #ident: #guid = #value;
-                                    },
-                                );
-                                continue;
-                            }
-                        }
-                        sorted.insert(name, structs::writer(writer, def));
+                        // let name = writer.reader.type_def_name(def);
+                        // if writer.reader.type_def_fields(def).next().is_none() {
+                        //     if let Some(guid) = type_def_guid(writer.reader, def) {
+                        //         let ident = to_ident(name);
+                        //         let value = writer.guid(&guid);
+                        //         let guid = writer.type_name(&Type::GUID);
+                                // sorted.insert(
+                                //     name,
+                                //     quote! {
+                                //         pub const #ident: #guid = #value;
+                                //     },
+                                // );
+                        //         continue;
+                        //     }
+                        // }
+                        // sorted.insert(name, structs::writer(writer, def));
                     }
                     TypeKind::Delegate => {
                         // sorted.insert(writer.reader.type_def_name(def), delegates::writer(writer, def));
