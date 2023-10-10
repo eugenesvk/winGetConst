@@ -26,7 +26,7 @@ impl Writer {
             self.newline = false;
             self.out.push('\n');
             for _ in 0..self.indent {
-                self.out.push_str("    ");
+                // self.out.push_str("    ");
             }
         }
 
