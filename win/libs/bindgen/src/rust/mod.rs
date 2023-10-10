@@ -5,7 +5,7 @@ mod constants;
 mod delegates;
 mod enums;
 mod extensions;
-mod functions;
+// mod functions;
 mod handles;
 mod implements;
 mod interfaces;
@@ -157,7 +157,7 @@ fn namespace(writer: &Writer, tree: &Tree) -> String {
         }
     }
 
-    let mut functions = BTreeMap::<&str, TokenStream>::new();
+    // let mut functions = BTreeMap::<&str, TokenStream>::new();
     let mut types = BTreeMap::<TypeKind, BTreeMap<&str, TokenStream>>::new();
 
     for item in writer.reader.namespace_items(writer.namespace, writer.filter) {
@@ -202,8 +202,8 @@ fn namespace(writer: &Writer, tree: &Tree) -> String {
                 }
             }
             Item::Fn(def, namespace) => {
-                let name = writer.reader.method_def_name(def);
-                functions.entry(name).or_default().combine(&functions::writer(writer, &namespace, def));
+                // let name = writer.reader.method_def_name(def);
+                // functions.entry(name).or_default().combine(&functions::writer(writer, &namespace, def));
             }
             Item::Const(def) => {
                 let name = writer.reader.field_name(def);
@@ -212,9 +212,9 @@ fn namespace(writer: &Writer, tree: &Tree) -> String {
         }
     }
 
-    for function in functions.values() {
-        tokens.combine(function);
-    }
+    // for function in functions.values() {
+    //     tokens.combine(function);
+    // }
 
     for ty in types.values().flat_map(|v| v.values()) {
         tokens.combine(ty);

@@ -104,9 +104,9 @@ pub fn standalone_imp(writer: &Writer) -> String {
         }
     }
 
-    for (function, namespace) in functions {
-        sorted.insert(&format!(".{}.{}", writer.reader.method_def_module_name(function), writer.reader.method_def_name(function)), functions::writer(writer, &namespace, function));
-    }
+    // for (function, namespace) in functions {
+    //     sorted.insert(&format!(".{}.{}", writer.reader.method_def_module_name(function), writer.reader.method_def_name(function)), functions::writer(writer, &namespace, function));
+    // }
 
     for constant in constants {
         sorted.insert(writer.reader.field_name(constant), constants::writer(writer, constant));
