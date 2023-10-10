@@ -9,7 +9,7 @@ mod extensions;
 // mod functions;
 mod handles;
 mod implements;
-mod interfaces;
+// mod interfaces;
 mod iterators;
 mod method_names;
 mod standalone;
@@ -179,25 +179,25 @@ fn namespace(writer: &Writer, tree: &Tree) -> String {
                             // types.entry(kind).or_default().insert(name, classes::writer(writer, def));
                         // }
                     }
-                    TypeKind::Interface => types.entry(kind).or_default().entry(name).or_default().combine(&interfaces::writer(writer, def)),
-                    TypeKind::Enum => types.entry(kind).or_default().entry(name).or_default().combine(&enums::writer(writer, def)),
+                    TypeKind::Interface => {}, //types.entry(kind).or_default().entry(name).or_default().combine(&interfaces::writer(writer, def)),
+                    TypeKind::Enum => {}, //types.entry(kind).or_default().entry(name).or_default().combine(&enums::writer(writer, def)),
                     TypeKind::Struct => {
-                        if writer.reader.type_def_fields(def).next().is_none() {
-                            if let Some(guid) = type_def_guid(writer.reader, def) {
-                                let ident = to_ident(name);
-                                let value = writer.guid(&guid);
-                                let guid = writer.type_name(&Type::GUID);
-                                // let cfg = type_def_cfg(writer.reader, def, &[]);
-                                // let doc = writer.cfg_doc(&cfg);
-                                    // #doc
-                                let constant = quote! {
-                                    pub const #ident: #guid = #value;
-                                };
-                                types.entry(TypeKind::Class).or_default().entry(name).or_default().combine(&constant);
-                                continue;
-                            }
-                        }
-                        types.entry(kind).or_default().entry(name).or_default().combine(&structs::writer(writer, def));
+                        // if writer.reader.type_def_fields(def).next().is_none() {
+                        //     if let Some(guid) = type_def_guid(writer.reader, def) {
+                        //         let ident = to_ident(name);
+                        //         let value = writer.guid(&guid);
+                        //         let guid = writer.type_name(&Type::GUID);
+                        //         // let cfg = type_def_cfg(writer.reader, def, &[]);
+                        //         // let doc = writer.cfg_doc(&cfg);
+                        //             // #doc
+                        //         let constant = quote! {
+                        //             pub const #ident: #guid = #value;
+                        //         };
+                        //         // types.entry(TypeKind::Class).or_default().entry(name).or_default().combine(&constant);
+                        //         continue;
+                        //     }
+                        // }
+                        // types.entry(kind).or_default().entry(name).or_default().combine(&structs::writer(writer, def));
                     }
                     TypeKind::Delegate => {}, //types.entry(kind).or_default().entry(name).or_default().combine(&delegates::writer(writer, def)),
                 }
