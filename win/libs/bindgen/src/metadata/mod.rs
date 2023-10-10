@@ -461,6 +461,7 @@ pub fn field_is_blittable(reader: &Reader, row: Field, enclosing: TypeDef) -> bo
     type_is_blittable(reader, &reader.field_type(row, Some(enclosing)))
 }
 
+#[allow(dead_code)]
 pub fn field_is_copyable(reader: &Reader, row: Field, enclosing: TypeDef) -> bool {
     type_is_copyable(reader, &reader.field_type(row, Some(enclosing)))
 }
@@ -483,6 +484,7 @@ pub fn type_is_blittable(reader: &Reader, ty: &Type) -> bool {
     }
 }
 
+#[allow(dead_code)]
 fn type_is_copyable(reader: &Reader, ty: &Type) -> bool {
     match ty {
         Type::TypeDef(row, _) => type_def_is_copyable(reader, *row),
