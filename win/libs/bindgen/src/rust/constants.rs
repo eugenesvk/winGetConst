@@ -27,27 +27,42 @@ pub fn writer(writer: &Writer, def: Field) -> TokenStream {
                       	quote! {#name #tab PCWSTR #tab str #tab #value;}}
             } else    	{let value_t = writer.typed_value(&writer.reader.constant_value(constant));
                       	quote! {#name #tab #value_t;}}
+                      	// pub const D3DKMT_SUBKEY_DX9: PCWSTR = "DX9";
+                      	// p!("¦{:?}¦",writer.reader.constant_value(constant)); //¦String("DX9")¦
+                      	// p!("¦{}¦",value); //¦"DX9"¦ patched→ ¦DX9¦
+                      	// p!("{:?}",value); TokenStream("i32 = 8i32")
+                      	// public const uint DXGK_MIN_PAGE_TABLE_LEVEL_COUNT = 2u;
+                      	// public const int D3DCLEAR_COMPUTERECTS = 8;
+                      	// let value = TokenStream(parse_lit(&value.to_string())); // 1i32 → 1 (done at typed_value)
         } else {
             let kind = writer.type_default_name(&ty);
             let value = writer.value(&writer.reader.constant_value(constant));
             let underlying_type = type_underlying_type(writer.reader, &ty);
+
+            // pub const MaxKeySetInfoClass: KEY_SET_INFORMATION_CLASS
+            // println!("constant={:?} value_pre={:?} constant_type={:?} underlying_type={:?}",&constant,&value,&constant_type,&underlying_type);
+            //constant=Constant(Row{row:5253,file:2}) value=TokenStream("2i32") constant_type=I32 underlying_type=I32
 
             let value = if underlying_type == constant_type {
                                              // value
                                             TokenStream(parse_lit(&value.to_string()))
             } else if writer.std && underlying_type == Type::ISize {
                   	 quote! { ::core::ptr::invalid_mut(#value as _) } // todo: convert to actual value
+                  	 // quote! { ::core::ptr::invalid_mut(#value as _) } // ::core::ptr::invalid_mut: expresses that the pointer is not associated with any actual allocation and is little more than a usize address in disguise.
             } else	{quote! {                          #value as _ }};
 
-            if !writer.sys && type_has_replacement(writer.reader, &ty) {
+            // println!("value_pos={:?}",&value); // 2
 
             if !writer.sys && type_has_replacement(writer.reader, &ty) { //HRESULT|PCSTR|PCWSTR|has_attr(NativeTypedefAttribute)|TypeKind::Enum
+                  	//quote! {#name #tab #kind #tab #kind(#value);}
                   	let type_prim = type_to_primitive(writer.reader, &ty);
                   	 quote! {#name #tab #kind #tab #type_prim #tab #value;}
             } else	{quote! {#name #tab #kind #tab _          #tab #value;}}
         }
     } else if let Some(guid) = field_guid(writer.reader, def) {
         let value = writer.guid(&guid);
+        // pub const GUID_DEVINTERFACE_GRAPHICSPOWER: ::windows_core::GUID = ::windows_core::GUID::from_u128(0xea5c6870_e93c_4588_bef1_fec42fc9429a);
+        // GUID_DEVINTERFACE_GRAPHICSPOWER GUID {ea5c6870-e93c-4588-bef1-fec42fc9429a}
         let guid = writer.type_name(&Type::GUID);
         let guid = TokenStream("GUID".to_string());
         quote! {#name #tab #guid #tab str #tab #value;} // todo get actual guid value
