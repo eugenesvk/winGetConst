@@ -71,3 +71,34 @@ pub fn parse_lit(num:&str) -> String {
     Err(ParseError) => "_".to_string(),
   }
 }
+
+// {81d0bfd5-6afe-48c2-99c0-95a08f97c5da}	DXVA_COPPQueryConnectorType
+// let myguid = ahkGUID::from_u128(0x81d0bfd5_6afe_48c2_99c0_95a08f97c5da);
+                            // 81d0bfd5-6afe-48c2-99c0-95a08f97c5da
+// let myguids = format!("{:?}",myguid);
+// p!("{}",myguids);
+
+// #[repr(C)] pub struct ahkGUID {
+//   pub n1:u32,
+//   pub n2:u16,
+//   pub n3:u16,
+//   pub n4:u16,
+//   pub n5:u16,
+//   pub n6:u32,}
+// impl ::core::marker::Copy for ahkGUID {}
+// impl ::core::clone::Clone for ahkGUID {fn clone(&self) -> Self { *self }}
+// impl ahkGUID {
+//    pub const fn from_u128(uuid:u128) -> Self {
+//     Self {
+//       n1: (uuid >> 96             ) as u32,
+//       n2: (uuid >> 80 & 0x____ffff) as u16,
+//       n3: (uuid >> 64 & 0x____ffff) as u16,
+//       n4: (uuid >> 48 & 0x____ffff) as u16,
+//       n5: (uuid >> 32 & 0x____ffff) as u16,
+//       n6: (uuid       & 0xffffffff) as u32,
+//       }}
+//  }
+// impl std::fmt::Debug for ahkGUID { fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+//   write!(f, "{{{:08x?}-{:04x?}-{:04x?}-{:04x?}-{:04x?}{:08x?}}}",
+//     self.n1,self.n2,self.n3,self.n4,self.n5,self.n6)
+// }}
