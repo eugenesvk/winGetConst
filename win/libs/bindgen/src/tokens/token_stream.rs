@@ -29,7 +29,7 @@ impl TokenStream {
     ///
     /// note: a space will be inserted before the other stream
     pub fn combine(&mut self, other: &TokenStream) {
-        self.push_space();
+        // self.push_space();
         self.0.push_str(&other.0)
     }
 
@@ -60,10 +60,10 @@ impl TokenStream {
     }
 
     pub(crate) fn push_space(&mut self) {
-        match self.last_char() {
-            None | Some(' ') => {}
-            _ => self.0.push(' '),
-        }
+        // match self.last_char() {
+            // None | Some(' ') => {}
+            // _ => self.0.push(' '),
+        // }
     }
 
     pub fn push(&mut self, c: char) {

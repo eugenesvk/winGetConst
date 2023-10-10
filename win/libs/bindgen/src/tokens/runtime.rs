@@ -178,29 +178,30 @@ impl<T: ToTokens> ToTokens for RepInterp<T> {
 }
 
 pub fn push_group(tokens: &mut TokenStream, delimiter: Delimiter, inner: TokenStream) {
-    tokens.push_space();
+    // tokens.push_space();
     tokens.push(delimiter.open());
     tokens.combine(&inner);
-    tokens.push_space();
+    // tokens.push_space();
     tokens.push(delimiter.close());
 }
 
 pub fn parse(tokens: &mut TokenStream, s: &str) {
-    tokens.push_space();
+    // tokens.push_space();
     tokens.push_str(s);
 }
 
 pub fn push_ident(tokens: &mut TokenStream, s: &str) {
-    match tokens.0.chars().last() {
-        None | Some(':') => {}
-        _ => tokens.0.push(' '),
-    }
+    // match tokens.0.chars().last() {
+    //     None | Some(':') => {}
+    //     _ => tokens.0.push(' '),
+    // }
     tokens.push_str(s);
 }
 
 pub fn push_colon2(tokens: &mut TokenStream) {
     match tokens.0.chars().last() {
-        Some(':') => tokens.push_str(" ::"),
+        Some(':') => tokens.push_str("::"),
+        // Some(':') => tokens.push_str(" ::"),
         _ => tokens.push_str("::"),
     }
 }
@@ -208,20 +209,20 @@ pub fn push_colon2(tokens: &mut TokenStream) {
 macro_rules! push_punct {
     ($name:ident $char1:tt) => {
         pub fn $name(tokens: &mut TokenStream) {
-            tokens.push_space();
+            // tokens.push_space();
             tokens.push($char1);
         }
     };
     ($name:ident $char1:tt $char2:tt) => {
         pub fn $name(tokens: &mut TokenStream) {
-            tokens.push_space();
+            // tokens.push_space();
             tokens.push($char1);
             tokens.push($char2);
         }
     };
     ($name:ident $char1:tt $char2:tt $char3:tt) => {
         pub fn $name(tokens: &mut TokenStream) {
-            tokens.push(' ');
+            // tokens.push(' ');
             tokens.push($char1);
             tokens.push($char2);
             tokens.push($char3);
