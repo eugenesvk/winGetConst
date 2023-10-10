@@ -1,3 +1,4 @@
+#![allow(non_upper_case_globals)]
 mod args;
 mod error;
 mod metadata;
@@ -9,6 +10,9 @@ mod winmd;
 
 pub use error::{Error, Result};
 use tree::Tree;
+
+pub const tab	:&str	= "\t";
+pub const nl 	:&str	= "\n";
 
 enum ArgKind {
     None,
