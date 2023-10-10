@@ -19,16 +19,16 @@ pub fn standalone_imp(writer: &Writer) -> String {
 
     for ty in types {
         match ty {
-            Type::HRESULT if writer.sys => sorted.insert("HRESULT", quote! { pub type HRESULT = i32; }),
-            Type::String if writer.sys => sorted.insert("HSTRING", quote! { pub type HSTRING = *mut ::core::ffi::c_void; }),
-            Type::IUnknown if writer.sys => sorted.insert("IUnknown", quote! { pub type IUnknown = *mut ::core::ffi::c_void; }),
-            Type::IInspectable if writer.sys => sorted.insert("IInspectable", quote! { pub type IInspectable = *mut ::core::ffi::c_void; }),
-            Type::PSTR if writer.sys => sorted.insert("PSTR", quote! { pub type PSTR = *mut u8; }),
-            Type::PWSTR if writer.sys => sorted.insert("PWSTR", quote! { pub type PWSTR = *mut u16; }),
-            Type::PCSTR if writer.sys => sorted.insert("PCSTR", quote! { pub type PCSTR = *const u8; }),
-            Type::PCWSTR if writer.sys => sorted.insert("PCWSTR", quote! { pub type PCWSTR = *const u16; }),
-            Type::BSTR if writer.sys => sorted.insert("BSTR", quote! { pub type BSTR = *const u16; }),
-            Type::GUID if writer.sys => {
+            Type::HRESULT     	if writer.sys	=> sorted.insert("HRESULT"     	, quote! { pub type HRESULT     	= i32; }),
+            Type::String      	if writer.sys	=> sorted.insert("HSTRING"     	, quote! { pub type HSTRING     	= *mut ::core::ffi::c_void; }),
+            Type::IUnknown    	if writer.sys	=> sorted.insert("IUnknown"    	, quote! { pub type IUnknown    	= *mut ::core::ffi::c_void; }),
+            Type::IInspectable	if writer.sys	=> sorted.insert("IInspectable"	, quote! { pub type IInspectable	= *mut ::core::ffi::c_void; }),
+            Type::PSTR        	if writer.sys	=> sorted.insert("PSTR"        	, quote! { pub type PSTR        	= *mut u8; }),
+            Type::PWSTR       	if writer.sys	=> sorted.insert("PWSTR"       	, quote! { pub type PWSTR       	= *mut u16; }),
+            Type::PCSTR       	if writer.sys	=> sorted.insert("PCSTR"       	, quote! { pub type PCSTR       	= *const u8; }),
+            Type::PCWSTR      	if writer.sys	=> sorted.insert("PCWSTR"      	, quote! { pub type PCWSTR      	= *const u16; }),
+            Type::BSTR        	if writer.sys	=> sorted.insert("BSTR"        	, quote! { pub type BSTR        	= *const u16; }),
+            Type::GUID        	if writer.sys	=> {
                 sorted.insert(
                     "GUID",
                     quote! {
