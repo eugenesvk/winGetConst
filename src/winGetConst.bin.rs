@@ -273,6 +273,23 @@ fn test1(){
   p!("{:?} → {:?}",val,my_num);
 }
 
+fn riddle() {
+  let args: Vec<String> = std::env::args().skip(1).collect();
+  if args.is_empty() {println!(r#"Usage: riddle.exe [options...]
+Options:
+  --in  <path>          Path to files and directories containing .winmd and .rdl files
+  --out <path>          Path to .winmd, .rdl, or .rs file to generate
+  --filter <namespace>  Namespaces to include or !exclude in output
+  --config <key=value>  Override a configuration value
+  --format              Format .rdl files only
+  --etc <path>          File containing command line options"#);
+  } else {
+    match windows_bindgen::bindgen(args) {
+      Ok(ok)    	=> p!("{}", ok),
+      Err(error)	=> {eprintln!("{}",error); std::process::exit(1);}}
+  }
+}
+
 fn main() {
   // 1 Parses Windows_sys crate rustdocs generated via cargo-semver-checks and saves results to a simple tab-separated name⭾value⭾type file
     // winConst_All.txt  	all constants
