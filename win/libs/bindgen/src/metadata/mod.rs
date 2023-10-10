@@ -616,16 +616,8 @@ pub fn type_def_signature(reader: &Reader, row: TypeDef, generics: &[Type]) -> S
                 unimplemented!();
             }
         }
-        TypeKind::Enum => format!("enum({};{})", reader.type_def_type_name(row), type_signature(reader, &reader.type_def_underlying_type(row))),
-        TypeKind::Struct => {
-            let mut result = format!("struct({}", reader.type_def_type_name(row));
-            for field in reader.type_def_fields(row) {
-                result.push(';');
-                result.push_str(&type_signature(reader, &reader.field_type(field, Some(row))));
-            }
-            result.push(')');
-            result
-        }
+        TypeKind::Enum => "".to_string(),
+        TypeKind::Struct => "".to_string(),
         TypeKind::Delegate => {
             if generics.is_empty() {
                 format!("delegate({})", type_def_interface_signature(reader, row, generics))
