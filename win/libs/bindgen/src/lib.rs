@@ -18,6 +18,7 @@ enum ArgKind {
     Config,
 }
 
+#[allow(unused_variables,unreachable_code)]
 pub fn bindgen<I, S>(args: I) -> Result<String>
 where
     I: IntoIterator<Item = S>,
