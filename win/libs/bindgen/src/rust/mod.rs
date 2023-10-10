@@ -10,10 +10,10 @@ mod extensions;
 mod handles;
 mod implements;
 // mod interfaces;
-mod iterators;
+// mod iterators;
 mod method_names;
 mod standalone;
-mod structs;
+// mod structs;
 mod try_format;
 mod winrt_methods;
 mod writer;
@@ -83,12 +83,12 @@ fn gen_package(writer: &Writer) -> Result<()> {
 
     trees.par_iter().try_for_each(|tree| {
         let directory = format!("{directory}/{}", tree.namespace.replace('.', "/"));
-        let mut tokens = namespace(writer, tree);
+        let tokens = namespace(writer, tree);
 
         let tokens_impl = if !writer.sys { namespace_impl(writer, tree) } else { String::new() };
 
         if !writer.sys && !tokens_impl.is_empty() {
-            tokens.push_str("#[cfg(feature = \"implement\")]\n::core::include!(\"impl.rs\");\n");
+            // tokens.push_str("#[cfg(feature = \"implement\")]\n::core::include!(\"impl.rs\");\n");
         }
 
         let output = format!("{directory}/mod.rs");
