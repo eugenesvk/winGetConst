@@ -186,10 +186,10 @@ fn namespace(writer: &Writer, tree: &Tree) -> String {
                                 let ident = to_ident(name);
                                 let value = writer.guid(&guid);
                                 let guid = writer.type_name(&Type::GUID);
-                                let cfg = type_def_cfg(writer.reader, def, &[]);
-                                let doc = writer.cfg_doc(&cfg);
+                                // let cfg = type_def_cfg(writer.reader, def, &[]);
+                                // let doc = writer.cfg_doc(&cfg);
+                                    // #doc
                                 let constant = quote! {
-                                    #doc
                                     pub const #ident: #guid = #value;
                                 };
                                 types.entry(TypeKind::Class).or_default().entry(name).or_default().combine(&constant);
