@@ -57,13 +57,13 @@ pub fn standalone_imp(writer: &Writer) -> String {
                 let kind = writer.reader.type_def_kind(def);
                 match kind {
                     TypeKind::Class => {
-                        let name = writer.reader.type_def_name(def);
-                        if writer.sys {
-                            let ident = to_ident(name);
-                            sorted.insert(name, quote! { pub type #ident = *mut ::core::ffi::c_void; });
-                        } else {
-                            sorted.insert(name, classes::writer(writer, def));
-                        }
+                        // let name = writer.reader.type_def_name(def);
+                        // if writer.sys {
+                        //     let ident = to_ident(name);
+                        //     sorted.insert(name, quote! { pub type #ident = *mut ::core::ffi::c_void; });
+                        // } else {
+                        //     sorted.insert(name, classes::writer(writer, def));
+                        // }
                     }
                     TypeKind::Interface => {
                         let name = writer.reader.type_def_name(def);
@@ -96,7 +96,7 @@ pub fn standalone_imp(writer: &Writer) -> String {
                         sorted.insert(name, structs::writer(writer, def));
                     }
                     TypeKind::Delegate => {
-                        sorted.insert(writer.reader.type_def_name(def), delegates::writer(writer, def));
+                        // sorted.insert(writer.reader.type_def_name(def), delegates::writer(writer, def));
                     }
                 }
             }
