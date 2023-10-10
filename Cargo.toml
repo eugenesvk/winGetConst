@@ -6,7 +6,7 @@ edition	= "2021"
 build  	= "build.rs"
 
 [workspace]
-members = ["helper"]	# relative to the workspace root
+members = ["helper","win/libs/bindgen",]	# relative to the workspace root
 exclude = ["test_crates/pub_module_level_const_missing"]
 
 [[bin]]
@@ -45,8 +45,11 @@ similar-asserts      	= {version="1.4.2",features=["serde"]}
   # ArrayVec : array-backed storage like vec (push/pop)
   # SliceVec : vec-like backed by your slice
 
+windows-bindgen	= "0.51.1"
+
 [patch.crates-io]
 # rustdoc-types	= {path="../rustdoc-types"}
+windows-bindgen	= {path="./win/libs/bindgen"}
 
 [build-dependencies]
 log	= "0.4"
