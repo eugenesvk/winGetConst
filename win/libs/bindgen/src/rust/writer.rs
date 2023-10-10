@@ -516,21 +516,19 @@ impl<'a> Writer<'a> {
         let literal = self.value(value);
         let literal = TokenStream(parse_lit(&literal.to_string())); // 1i32 → 1
         match value {
-            Value::Bool(_) => quote! { bool = #literal },
-            Value::U8(_) => quote! { u8 = #literal },
-            Value::I8(_) => quote! { i8 = #literal },
-            Value::U16(_) => quote! { u16 = #literal },
-            Value::I16(_) => quote! { i16 = #literal },
-            Value::U32(_) => quote! { u32 = #literal },
-            Value::I32(_) => quote! { i32 = #literal },
-            Value::U64(_) => quote! { u64 = #literal },
-            Value::I64(_) => quote! { i64 = #literal },
-            Value::F32(_) => quote! { f32 = #literal },
-            Value::F64(_) => quote! { f64 = #literal },
-            Value::String(_) => {
-                quote! { &str = #literal }
-            }
-            rest => unimplemented!("{rest:?}"),
+            Value::Bool(_)  	=>  quote! {bool	#tab	bool	#tab	#literal},
+            Value::U8(_)    	=>  quote! { u8 	#tab	 u8 	#tab	#literal},
+            Value::I8(_)    	=>  quote! { i8 	#tab	 i8 	#tab	#literal},
+            Value::U16(_)   	=>  quote! {u16 	#tab	u16 	#tab	#literal},
+            Value::I16(_)   	=>  quote! {i16 	#tab	i16 	#tab	#literal},
+            Value::U32(_)   	=>  quote! {u32 	#tab	u32 	#tab	#literal},
+            Value::I32(_)   	=>  quote! {i32 	#tab	i32 	#tab	#literal},
+            Value::U64(_)   	=>  quote! {u64 	#tab	u64 	#tab	#literal},
+            Value::I64(_)   	=>  quote! {i64 	#tab	i64 	#tab	#literal},
+            Value::F32(_)   	=>  quote! {f32 	#tab	f32 	#tab	#literal},
+            Value::F64(_)   	=>  quote! {f64 	#tab	f64 	#tab	#literal},
+            Value::String(_)	=> {quote! {str 	#tab	str 	#tab	#literal}}
+            rest            	=> unimplemented!("{rest:?}"),
         }
     }
 
