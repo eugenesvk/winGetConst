@@ -377,39 +377,6 @@ fn type_def_is_callback(reader: &Reader, row: TypeDef) -> bool {
     !reader.type_def_flags(row).contains(TypeAttributes::WindowsRuntime) && reader.type_def_kind(row) == TypeKind::Delegate
 }
 
-pub fn type_has_callback(reader: &Reader, ty: &Type) -> bool {
-    match ty {
-        Type::TypeDef(row, _) => type_def_has_callback(reader, *row),
-        Type::Win32Array(ty, _) => type_has_callback(reader, ty),
-        _ => false,
-    }
-}
-pub fn type_def_has_callback(reader: &Reader, row: TypeDef) -> bool {
-    if type_def_is_callback(reader, row) {
-        return true;
-    }
-    if reader.type_def_kind(row) != TypeKind::Struct {
-        return false;
-    }
-    fn check(reader: &Reader, row: TypeDef) -> bool {
-        if reader.type_def_fields(row).any(|field| type_has_callback(reader, &reader.field_type(field, Some(row)))) {
-            return true;
-        }
-        false
-    }
-    let type_name = reader.type_def_type_name(row);
-    if type_name.namespace.is_empty() {
-        check(reader, row)
-    } else {
-        for row in reader.get_type_def(type_name) {
-            if check(reader, row) {
-                return true;
-            }
-        }
-        false
-    }
-}
-
 pub fn type_interfaces(reader: &Reader, ty: &Type) -> Vec<Interface> {
     // TODO: collect into btree map and then return collected vec
     // This will both sort the results and should make finding dupes faster
@@ -576,55 +543,8 @@ pub fn method_def_special_name(reader: &Reader, row: MethodDef) -> String {
     }
 }
 
-pub fn method_def_static_lib(reader: &Reader, row: MethodDef) -> Option<String> {
-    reader.find_attribute(row, "StaticLibraryAttribute").and_then(|attribute| {
-        let args = reader.attribute_args(attribute);
-        if let Value::String(value) = &args[0].1 {
-            return Some(value.clone());
-        }
-        None
-    })
-}
-
-pub fn method_def_extern_abi(reader: &Reader, def: MethodDef) -> &'static str {
-    let impl_map = reader.method_def_impl_map(def).expect("ImplMap not found");
-    let flags = reader.impl_map_flags(impl_map);
-
-    if flags.contains(PInvokeAttributes::CallConvPlatformapi) {
-        "system"
-    } else if flags.contains(PInvokeAttributes::CallConvCdecl) {
-        "cdecl"
-    } else {
-        unimplemented!()
-    }
-}
-
-pub fn type_def_has_default_constructor(reader: &Reader, row: TypeDef) -> bool {
-    for attribute in reader.attributes(row) {
-        if reader.attribute_name(attribute) == "ActivatableAttribute" {
-            if reader.attribute_args(attribute).iter().any(|arg| matches!(arg.1, Value::TypeName(_))) {
-                continue;
-            } else {
-                return true;
-            }
-        }
-    }
-    false
-}
-
-pub fn type_def_has_default_interface(reader: &Reader, row: TypeDef) -> bool {
-    reader.type_def_interface_impls(row).any(|imp| reader.has_attribute(imp, "DefaultAttribute"))
-}
-
 pub fn type_def_is_exclusive(reader: &Reader, row: TypeDef) -> bool {
     reader.has_attribute(row, "ExclusiveToAttribute")
-}
-
-pub fn type_is_exclusive(reader: &Reader, ty: &Type) -> bool {
-    match ty {
-        Type::TypeDef(row, _) => type_def_is_exclusive(reader, *row),
-        _ => false,
-    }
 }
 
 pub fn type_is_struct(reader: &Reader, ty: &Type) -> bool {
@@ -652,74 +572,6 @@ pub fn type_is_primitive(reader: &Reader, ty: &Type) -> bool {
         Type::TypeDef(row, _) => type_def_is_primitive(reader, *row),
         Type::Bool | Type::Char | Type::I8 | Type::U8 | Type::I16 | Type::U16 | Type::I32 | Type::U32 | Type::I64 | Type::U64 | Type::F32 | Type::F64 | Type::ISize | Type::USize | Type::HRESULT | Type::ConstPtr(_, _) | Type::MutPtr(_, _) => true,
         _ => false,
-    }
-}
-
-fn type_has_explicit_layout(reader: &Reader, ty: &Type) -> bool {
-    match ty {
-        Type::TypeDef(row, _) => type_def_has_explicit_layout(reader, *row),
-        Type::Win32Array(ty, _) => type_has_explicit_layout(reader, ty),
-        _ => false,
-    }
-}
-
-pub fn type_def_has_explicit_layout(reader: &Reader, row: TypeDef) -> bool {
-    if reader.type_def_kind(row) != TypeKind::Struct {
-        return false;
-    }
-    fn check(reader: &Reader, row: TypeDef) -> bool {
-        if reader.type_def_flags(row).contains(TypeAttributes::ExplicitLayout) {
-            return true;
-        }
-        if reader.type_def_fields(row).any(|field| type_has_explicit_layout(reader, &reader.field_type(field, Some(row)))) {
-            return true;
-        }
-        false
-    }
-    let type_name = reader.type_def_type_name(row);
-    if type_name.namespace.is_empty() {
-        check(reader, row)
-    } else {
-        for row in reader.get_type_def(type_name) {
-            if check(reader, row) {
-                return true;
-            }
-        }
-        false
-    }
-}
-
-fn type_has_packing(reader: &Reader, ty: &Type) -> bool {
-    match ty {
-        Type::TypeDef(row, _) => type_def_has_packing(reader, *row),
-        Type::Win32Array(ty, _) => type_has_packing(reader, ty),
-        _ => false,
-    }
-}
-
-pub fn type_def_has_packing(reader: &Reader, row: TypeDef) -> bool {
-    if reader.type_def_kind(row) != TypeKind::Struct {
-        return false;
-    }
-    fn check(reader: &Reader, row: TypeDef) -> bool {
-        if reader.type_def_class_layout(row).is_some() {
-            return true;
-        }
-        if reader.type_def_fields(row).any(|field| type_has_packing(reader, &reader.field_type(field, Some(row)))) {
-            return true;
-        }
-        false
-    }
-    let type_name = reader.type_def_type_name(row);
-    if type_name.namespace.is_empty() {
-        check(reader, row)
-    } else {
-        for row in reader.get_type_def(type_name) {
-            if check(reader, row) {
-                return true;
-            }
-        }
-        false
     }
 }
 
