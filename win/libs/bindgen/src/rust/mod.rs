@@ -1,3 +1,4 @@
+#![allow(unused_variables,dead_code)]
 mod cfg;
 // mod classes;
 mod com_methods;
