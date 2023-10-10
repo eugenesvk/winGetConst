@@ -362,9 +362,9 @@ impl Writer {
     }
 
     fn lit_str(&mut self, lit: &syn::LitStr) {
-        self.word("\"");
+        // self.word("\"");
         self.word(&lit.value());
-        self.word("\"");
+        // self.word("\"");
     }
 
     fn lit_int(&mut self, lit: &syn::LitInt) {
