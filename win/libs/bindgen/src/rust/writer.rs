@@ -534,7 +534,8 @@ impl<'a> Writer<'a> {
 
     pub fn guid(&self, value: &GUID) -> TokenStream {
         let guid = self.type_name(&Type::GUID);
-        format!("{}::from_u128(0x{:08x?}_{:04x?}_{:04x?}_{:02x?}{:02x?}_{:02x?}{:02x?}{:02x?}{:02x?}{:02x?}{:02x?})", guid.into_string(), value.0, value.1, value.2, value.3, value.4, value.5, value.6, value.7, value.8, value.9, value.10).into()
+        format!("{{{:08x?}-{:04x?}-{:04x?}-{:02x?}{:02x?}-{:02x?}{:02x?}-{:02x?}{:02x?}{:02x?}{:02x?}}}",value.0,value.1,value.2,value.3,value.4,value.5,value.6,value.7,value.8,value.9,value.10).into()
+        // format!("{}::from_u128(0x{:08x?}_{:04x?}_{:04x?}_{:02x?}{:02x?}_{:02x?}{:02x?}{:02x?}{:02x?}{:02x?}{:02x?})", guid.into_string(), value.0, value.1, value.2, value.3, value.4, value.5, value.6, value.7, value.8, value.9, value.10).into()
     }
     pub fn interface_core_traits(&self, def: TypeDef, _generics: &[Type], ident: &TokenStream, constraints: &TokenStream, _phantoms: &TokenStream, features: &TokenStream) -> TokenStream {
         let name = crate::trim_tick(self.reader.type_def_name(def));
