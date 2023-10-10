@@ -146,15 +146,12 @@ fn namespace(writer: &Writer, tree: &Tree) -> String {
         let name = to_ident(name);
         let namespace_feature = tree.namespace[tree.namespace.find('.').unwrap() + 1..].replace('.', "_");
         if writer.package {
-            tokens.combine(&quote! {
-                #[cfg(feature = #namespace_feature)]
-                pub mod #name;
-            });
+            // tokens.combine(&quote! {pub mod #name;});
         } else {
-            tokens.combine(&quote! { pub mod #name });
-            tokens.push_str("{");
+            // tokens.combine(&quote! { pub mod #name });
+            // tokens.push_str("{");
             tokens.push_str(&namespace(writer, tree));
-            tokens.push_str("}");
+            // tokens.push_str("}");
         }
     }
 
