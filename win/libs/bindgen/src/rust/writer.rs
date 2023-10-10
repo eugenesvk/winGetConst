@@ -500,13 +500,13 @@ impl<'a> Writer<'a> {
             Value::F32(value) => quote! { #value },
             Value::F64(value) => quote! { #value },
             Value::String(value) => {
-                let mut tokens = "\"".to_string();
+                let mut tokens = "".to_string(); // \"
 
                 for u in value.chars() {
                     write!(tokens, "{}", u.escape_default()).unwrap();
                 }
 
-                tokens.push('\"');
+                // tokens.push('\"');
                 tokens.into()
             }
             rest => unimplemented!("{rest:?}"),
