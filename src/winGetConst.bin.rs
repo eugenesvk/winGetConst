@@ -307,4 +307,14 @@ fn main() {
   // merge_this_with_ziggle();
 
   // test1()
+
+  // 4 Try parsing WinMD files
+  _ = r#"
+  fin   	= r'./win/libs/bindgen/default/Windows.Wdk.winmd'
+  fout  	= r'./test_data/win_bindgen.rs'
+  filter	= r'Windows.Wdk.System.Registry'
+  cargo run -- --in @(fin) --out @(fout) --filter @(filter)
+  "#;
+
+  riddle();
 }
