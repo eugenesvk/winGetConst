@@ -13,6 +13,7 @@ pub fn writer(writer: &Writer, def: Field) -> TokenStream {
     let doc = writer.cfg_doc(&cfg);
     let features = writer.cfg_features(&cfg);
 
+    // println!("def= {:?} ty={:?}",&def,&ty); //def=Field(Row{row:15644,file:2})ty=TypeDef(TypeDef(Row{row:3837,file:2}),[])
     if let Some(constant) = writer.reader.field_constant(def) {
         let constant_type = writer.reader.constant_type(constant);
 
@@ -20,73 +21,40 @@ pub fn writer(writer: &Writer, def: Field) -> TokenStream {
             if ty == Type::String {
                 let crate_name = writer.crate_name();
                 if field_is_ansi(writer.reader, def) {
-                    let value = writer.value(&writer.reader.constant_value(constant));
-                    quote! {
-                        #doc
-                        #features
-                        pub const #name: #crate_name PCSTR = #crate_name s!(#value);
-                    }
-                } else {
-                    let value = writer.value(&writer.reader.constant_value(constant));
-                    quote! {
-                        #doc
-                        #features
-                        pub const #name: #crate_name PCWSTR = #crate_name w!(#value);
-                    }
-                }
-            } else {
-                let value = writer.typed_value(&writer.reader.constant_value(constant));
-                quote! {
-                    #doc
-                    #features
-                    pub const #name: #value;
-                }
-            }
+                      	{let value = writer.value(      &writer.reader.constant_value(constant));
+                      	quote! {#name #tab PCSTR  #tab str #tab #value;}
+                } else	{let value = writer.value(      &writer.reader.constant_value(constant));
+                      	quote! {#name #tab PCWSTR #tab str #tab #value;}}
+            } else    	{let value_t = writer.typed_value(&writer.reader.constant_value(constant));
+                      	quote! {#name #tab #value_t;}}
         } else {
             let kind = writer.type_default_name(&ty);
             let value = writer.value(&writer.reader.constant_value(constant));
             let underlying_type = type_underlying_type(writer.reader, &ty);
 
             let value = if underlying_type == constant_type {
-                value
+                                             // value
+                                            TokenStream(parse_lit(&value.to_string()))
             } else if writer.std && underlying_type == Type::ISize {
-                quote! { ::core::ptr::invalid_mut(#value as _) }
-            } else {
-                quote! { #value as _ }
-            };
+                  	 quote! { ::core::ptr::invalid_mut(#value as _) } // todo: convert to actual value
+            } else	{quote! {                          #value as _ }};
 
             if !writer.sys && type_has_replacement(writer.reader, &ty) {
-                quote! {
-                    #doc
-                    #features
-                    pub const #name: #kind = #kind(#value);
-                }
-            } else {
-                quote! {
-                    #doc
-                    #features
-                    pub const #name: #kind = #value;
-                }
-            }
+
+            if !writer.sys && type_has_replacement(writer.reader, &ty) { //HRESULT|PCSTR|PCWSTR|has_attr(NativeTypedefAttribute)|TypeKind::Enum
+                  	let type_prim = type_to_primitive(writer.reader, &ty);
+                  	 quote! {#name #tab #kind #tab #type_prim #tab #value;}
+            } else	{quote! {#name #tab #kind #tab _          #tab #value;}}
         }
     } else if let Some(guid) = field_guid(writer.reader, def) {
         let value = writer.guid(&guid);
         let guid = writer.type_name(&Type::GUID);
-        quote! {
-            #doc
-            pub const #name: #guid = #value;
-        }
+        let guid = TokenStream("GUID".to_string());
+        quote! {#name #tab #guid #tab str #tab #value;} // todo get actual guid value
     } else if let Some(value) = initializer(writer, def) {
         let kind = writer.type_default_name(&ty);
-
-        quote! {
-            #doc
-            #features
-            pub const #name: #kind = #kind { #value };
-        }
-    } else {
-        quote! {}
-    }
+        quote! {#name #tab #kind #tab _ { #value};} // todo get primivite
+    } else {quote! {}}
 }
 
 fn initializer(writer: &Writer, def: Field) -> Option<TokenStream> {
