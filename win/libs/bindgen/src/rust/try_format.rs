@@ -1,5 +1,6 @@
 use std::io::Write;
 
+#[allow(unreachable_code)]
 pub fn try_format(writer: &super::Writer, tokens: &str) -> String {
     let preamble = if writer.package {
         String::new()
@@ -19,6 +20,7 @@ pub fn try_format(writer: &super::Writer, tokens: &str) -> String {
     let allow = if writer.package { "" } else { "#![allow(non_snake_case, non_upper_case_globals, non_camel_case_types, dead_code, clippy::all)]\n" };
     // let tokens = format!("{preamble}{allow}{tokens}");
     let tokens = format!("{tokens}");
+    return tokens;
 
     let Ok(mut child) = std::process::Command::new("rustfmt").args(["--config","use_small_heuristics=Off,max_width=50000"]).stdin(std::process::Stdio::piped()).stdout(std::process::Stdio::piped()).stderr(std::process::Stdio::null()).spawn() else {
         return tokens;
