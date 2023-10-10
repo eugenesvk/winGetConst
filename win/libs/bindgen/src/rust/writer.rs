@@ -514,6 +514,7 @@ impl<'a> Writer<'a> {
     }
     pub fn typed_value(&self, value: &Value) -> TokenStream {
         let literal = self.value(value);
+        let literal = TokenStream(parse_lit(&literal.to_string())); // 1i32 → 1
         match value {
             Value::Bool(_) => quote! { bool = #literal },
             Value::U8(_) => quote! { u8 = #literal },
