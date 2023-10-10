@@ -34,8 +34,6 @@ serde                	= "1.0.188"
 serde_json           	= "1.0.107"
 # Formats            	#
 ron                  	= "0.8.1"
-# Parse              	#
-litrs                	= "0.4.0" # convert 1i32 literal from str to integer
 # Misc               	#
 lazy_static          	= "1.4.0"
 # Test               	#
