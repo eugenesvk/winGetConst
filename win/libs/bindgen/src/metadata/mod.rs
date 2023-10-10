@@ -654,6 +654,24 @@ pub fn type_has_replacement(reader: &Reader, ty: &Type) -> bool {
     }
 }
 
+pub fn type_to_primitive(reader: &Reader, ty: &Type) -> &'static str {
+    match ty {
+        Type::HRESULT                                                	=> "i32",
+        Type::PCSTR | Type::PCWSTR                                   	=> "str", // todo: or use PTR?
+        Type::TypeDef(row,_)                                         	=> {
+          if type_def_is_handle(reader, *row)                        	{"isize" // NativeTypedef e.g. HCS_CALLBACK IntPtr
+          } else if reader.type_def_kind(*row) == TypeKind::Enum     	{
+            // reader.type_def_type_name(*row)                       	Windows.Win32.AI.MachineLearning.DirectML.DML_TENSOR_TYPE
+            // reader.type_def_size(*row)                            	4
+            // reader.type_def_underlying_type(*row)                 	I32
+            let und_type = reader.type_def_underlying_type(*row);
+            type_prim_to_str(&und_type)
+          } else	{"_"}
+        },
+        _	=> "_",
+    }
+}
+
 pub fn type_def_guid(reader: &Reader, row: TypeDef) -> Option<GUID> {
     reader.find_attribute(row, "GuidAttribute").map(|attribute| GUID::from_args(&reader.attribute_args(attribute)))
 }
