@@ -6,7 +6,7 @@ edition = "2021"
 license = "MIT OR Apache-2.0"
 description = "Windows metadata compiler"
 repository = "https://github.com/microsoft/windows-rs"
-readme = "../../../docs/readme.md"
+# readme = "../../../docs/readme.md"
 
 [package.metadata.docs.rs]
 default-target = "x86_64-pc-windows-msvc"
