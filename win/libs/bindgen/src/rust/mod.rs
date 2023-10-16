@@ -11,7 +11,6 @@ mod com_methods;
 mod constants;
 // mod delegates;
 mod enums;
-mod extensions;
 mod handles;
 mod implements;
 // mod interfaces;
