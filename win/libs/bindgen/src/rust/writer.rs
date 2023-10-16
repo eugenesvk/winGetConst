@@ -431,39 +431,7 @@ impl<'a> Writer<'a> {
     //
 
     pub(crate) fn namespace(&self, namespace: &str) -> TokenStream {
-        if self.flatten || namespace == self.namespace {
-            quote! {}
-        } else {
-            let is_external = namespace.starts_with("Windows.") && !self.namespace.starts_with("Windows");
-            let mut relative = self.namespace.split('.').peekable();
-            let mut namespace = namespace.split('.').peekable();
-
-            while relative.peek() == namespace.peek() {
-                if relative.next().is_none() {
-                    break;
-                }
-
-                namespace.next();
-            }
-
-            let mut tokens = TokenStream::new();
-
-            if is_external {
-                tokens.push_str("::windows::");
-                namespace.next();
-            } else {
-                for _ in 0..relative.count() {
-                    tokens.push_str("super::");
-                }
-            }
-
-            for namespace in namespace {
-                tokens.push_str(namespace);
-                tokens.push_str("::");
-            }
-
-            tokens
-        }
+        quote! {}
     }
     pub fn crate_name(&self) -> TokenStream {
         quote! {}
