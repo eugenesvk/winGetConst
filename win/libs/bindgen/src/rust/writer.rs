@@ -83,83 +83,50 @@ impl<'a> Writer<'a> {
 
     pub(crate) fn type_name(&self, ty: &Type) -> TokenStream {
         match ty {
-            Type::Void => quote! { ::core::ffi::c_void },
-            Type::Bool => quote! { bool },
-            Type::Char => quote! { u16 },
-            Type::I8 => quote! { i8 },
-            Type::U8 => quote! { u8 },
-            Type::I16 => quote! { i16 },
-            Type::U16 => quote! { u16 },
-            Type::I32 => quote! { i32 },
-            Type::U32 => quote! { u32 },
-            Type::I64 => quote! { i64 },
-            Type::U64 => quote! { u64 },
-            Type::F32 => quote! { f32 },
-            Type::F64 => quote! { f64 },
-            Type::ISize => quote! { isize },
-            Type::USize => quote! { usize },
-            Type::String => {
-                let crate_name = self.crate_name();
-                quote! { #crate_name HSTRING }
-            }
-            Type::BSTR => {
-                let crate_name = self.crate_name();
-                quote! { #crate_name BSTR }
-            }
-            Type::IInspectable => {
-                let crate_name = self.crate_name();
-                quote! { #crate_name IInspectable }
-            }
-            Type::GUID => {
-                let crate_name = self.crate_name();
-                quote! { #crate_name GUID }
-            }
-            Type::IUnknown => {
-                let crate_name = self.crate_name();
-                quote! { #crate_name IUnknown }
-            }
-            Type::HRESULT => {
-                let crate_name = self.crate_name();
-                quote! { #crate_name HRESULT }
-            }
-            Type::PSTR => {
-                let crate_name = self.crate_name();
-                quote! { #crate_name PSTR }
-            }
-            Type::PWSTR => {
-                let crate_name = self.crate_name();
-                quote! { #crate_name PWSTR }
-            }
-            Type::PCSTR => {
-                let crate_name = self.crate_name();
-                quote! { #crate_name PCSTR }
-            }
-            Type::PCWSTR => {
-                let crate_name = self.crate_name();
-                quote! { #crate_name PCWSTR }
-            }
-            Type::Win32Array(ty, len) => {
+            Type::Void               	=> quote! { ::core::ffi::c_void },
+            Type::Bool               	=> quote! { bool },
+            Type::Char               	=> quote! { u16 },
+            Type::I8                 	=> quote! { i8 },
+            Type::U8                 	=> quote! { u8 },
+            Type::I16                	=> quote! { i16 },
+            Type::U16                	=> quote! { u16 },
+            Type::I32                	=> quote! { i32 },
+            Type::U32                	=> quote! { u32 },
+            Type::I64                	=> quote! { i64 },
+            Type::U64                	=> quote! { u64 },
+            Type::F32                	=> quote! { f32 },
+            Type::F64                	=> quote! { f64 },
+            Type::ISize              	=> quote! { isize },
+            Type::USize              	=> quote! { usize },
+            Type::String             	=> {let crate_name = self.crate_name(); quote! { #crate_name HSTRING }}
+            Type::BSTR               	=> {let crate_name = self.crate_name(); quote! { #crate_name BSTR }}
+            Type::IInspectable       	=> {let crate_name = self.crate_name(); quote! { #crate_name IInspectable }}
+            Type::GUID               	=> {let crate_name = self.crate_name(); quote! { #crate_name GUID }}
+            Type::IUnknown           	=> {let crate_name = self.crate_name(); quote! { #crate_name IUnknown }}
+            Type::HRESULT            	=> {let crate_name = self.crate_name(); quote! { #crate_name HRESULT }}
+            Type::PSTR               	=> {let crate_name = self.crate_name(); quote! { #crate_name PSTR }}
+            Type::PWSTR              	=> {let crate_name = self.crate_name(); quote! { #crate_name PWSTR }}
+            Type::PCSTR              	=> {let crate_name = self.crate_name(); quote! { #crate_name PCSTR }}
+            Type::PCWSTR             	=> {let crate_name = self.crate_name(); quote! { #crate_name PCWSTR }}
+            Type::Win32Array(ty, len)	=> {
                 let name = self.type_default_name(ty);
                 let len = Literal::usize_unsuffixed(*len);
-                quote! { [#name; #len] }
-            }
-            Type::GenericParam(generic) => self.reader.generic_param_name(*generic).into(),
-            Type::TypeDef(def, generics) => self.type_def_name(*def, generics),
-            Type::MutPtr(ty, pointers) => {
+                quote! { [#name; #len] }}
+            Type::GenericParam(generic) 	=> self.reader.generic_param_name(*generic).into(),
+            Type::TypeDef(def, generics)	=> self.type_def_name(*def, generics),
+            Type::MutPtr(ty, pointers)  	=> {
                 let pointers = mut_ptrs(*pointers);
                 let ty = self.type_default_name(ty);
-                quote! { #pointers #ty }
-            }
-            Type::ConstPtr(ty, pointers) => {
+                quote! { #pointers #ty }}
+            Type::ConstPtr(ty, pointers)	=> {
                 let pointers = const_ptrs(*pointers);
                 let ty = self.type_default_name(ty);
-                quote! { #pointers #ty }
-            }
-            Type::WinrtArray(ty) => self.type_name(ty),
-            Type::WinrtArrayRef(ty) => self.type_name(ty),
-            Type::ConstRef(ty) => self.type_name(ty),
-            Type::PrimitiveOrEnum(_, ty) => self.type_name(ty),
-            rest => unimplemented!("{rest:?}"),
+                quote! { #pointers #ty }}
+            Type::WinrtArray(ty)        	=> self.type_name(ty),
+            Type::WinrtArrayRef(ty)     	=> self.type_name(ty),
+            Type::ConstRef(ty)          	=> self.type_name(ty),
+            Type::PrimitiveOrEnum(_, ty)	=> self.type_name(ty),
+            rest                        	=> unimplemented!("{rest:?}"),
         }
     }
     pub fn type_vtbl_name(&self, ty: &Type) -> TokenStream {
