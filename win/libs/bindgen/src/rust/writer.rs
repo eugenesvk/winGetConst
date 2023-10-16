@@ -466,15 +466,7 @@ impl<'a> Writer<'a> {
         }
     }
     pub fn crate_name(&self) -> TokenStream {
-        if self.sys {
-            if self.flatten {
-                TokenStream::new()
-            } else {
-                "::windows_sys::core::".into()
-            }
-        } else {
-            "::windows_core::".into()
-        }
+        quote! {}
     }
     fn scoped_name(&self, def: TypeDef) -> String {
         if let Some(enclosing_type) = self.reader.type_def_enclosing_type(def) {
