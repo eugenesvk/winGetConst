@@ -19,8 +19,7 @@ pub fn writer(writer: &Writer, def: Field) -> TokenStream {
 
         if ty == constant_type {
             if ty == Type::String {
-                let crate_name = writer.crate_name();
-                if field_is_ansi(writer.reader, def) {
+                if field_is_ansi(writer.reader, def)
                       	{let value = writer.value(      &writer.reader.constant_value(constant));
                       	quote! {#name #tab PCSTR  #tab str #tab #value;}
                 } else	{let value = writer.value(      &writer.reader.constant_value(constant));
