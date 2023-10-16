@@ -4,6 +4,7 @@ use helper        	::*; // gets macros
 use helper::alias 	::*;
 use helper::helper	::*;
 use helper::fs    	::*;
+use helper::parser	::*;
 
 use std::path       	::{self,Path,PathBuf};
 use std::collections	::{HashMap,BTreeMap};
