@@ -14,7 +14,6 @@ mod handles;
 mod implements;
 mod method_names;
 mod standalone;
-// mod structs;
 mod try_format;
 mod winrt_methods;
 mod writer;
