@@ -223,8 +223,6 @@ fn namespace(writer: &Writer, tree: &Tree) -> String {
         tokens.combine(ty);
     }
 
-    tokens.combine(&extensions::gen_mod(writer, tree.namespace));
-
     if writer.implement {
         tokens.push_str(&namespace_impl(writer, tree));
     }
@@ -256,11 +254,8 @@ fn namespace_impl(writer: &Writer, tree: &Tree) -> String {
 
     let types = types.values();
 
-    let mut tokens = quote! {
-        #(#types)*
-    };
+    let tokens = quote! { #(#types)*};
 
-    tokens.combine(&extensions::gen_impl(tree.namespace));
     tokens.into_string()
 }
 
