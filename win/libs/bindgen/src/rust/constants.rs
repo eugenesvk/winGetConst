@@ -65,9 +65,15 @@ pub fn writer(writer: &Writer, def: Field) -> TokenStream {
         let guid = writer.type_name(&Type::GUID);
         quote! {#name #tab #guid #tab str #tab #value;}
     } else if let Some((value, nm_val)) = initializer(writer, def) {
-    } else if let Some(value) = initializer(writer, def) {
         let kind = writer.type_default_name(&ty);
-        quote! {#name #tab #kind #tab _ { #value};} // todo get primivite
+        let mut result = quote! {};
+        let val = quote! {#name #tab #kind #tab _ #tab {#value};}; result.combine(&val); // combo type, no primitive
+        if nm_val.len() > 0 {
+            for (k,(v,type_nm,type_prim)) in nm_val {
+                let val = quote! {#name _ #k #tab #type_nm #tab #type_prim #tab #v;}; result.combine(&val);
+            }
+        }
+        result
     } else {quote! {}}
 }
 
