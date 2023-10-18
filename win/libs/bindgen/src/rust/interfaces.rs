@@ -1,11 +1,8 @@
 use super::*;
 
 pub fn writer(writer: &Writer, def: TypeDef) -> TokenStream {
-    if writer.sys {
-        gen_sys_interface(writer, def)
-    } else {
-        gen_win_interface(writer, def)
-    }
+    if writer.sys	{gen_sys_interface(writer, def)
+    } else       	{gen_win_interface(writer, def)}
 }
 
 fn gen_sys_interface(writer: &Writer, def: TypeDef) -> TokenStream {
