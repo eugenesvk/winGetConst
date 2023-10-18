@@ -94,7 +94,7 @@ fn initializer(writer: &Writer, def: Field) -> Option<(TokenStream,HashMap<Strin
     Some((result, result_map))
 }
 
-fn field_initializer<'a>(writer: &Writer, field: Field, input: &'a str) -> (TokenStream, &'a str) {
+fn field_initializer<'a>(writer: &Writer, field: Field, input: &'a str) -> (TokenStream, &'a str, Option<(TokenStream,TokenStream,String,String)>) {
     let name = to_ident(writer.reader.field_name(field));
 
     match writer.reader.field_type(field, None) {
@@ -113,7 +113,7 @@ fn field_initializer<'a>(writer: &Writer, field: Field, input: &'a str) -> (Toke
         Type::Win32Array(_, len) => {
             let (literals, rest) = read_literal_array(input, len);
             let literals = literals.iter().map(|literal| TokenStream::from(*literal));
-            (quote! { #name: [#(#literals,)*], }, rest)
+            (quote! { #name: [#(#literals,)*], }, rest, None)
         }
         _ => {
             let (literal, rest) = read_literal(input);
