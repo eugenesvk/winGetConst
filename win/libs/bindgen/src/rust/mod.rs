@@ -23,31 +23,20 @@ use cfg::*;
 use rayon::prelude::*;
 
 pub fn from_reader(reader: &metadata::Reader, filter: &metadata::Filter, mut config: std::collections::BTreeMap<&str, &str>, output: &str) -> Result<()> {
-    let mut writer = Writer::new(reader, filter, output);
-    writer.package = config.remove("package").is_some();
-    writer.flatten = config.remove("flatten").is_some();
-    writer.std = config.remove("std").is_some();
-    writer.sys = writer.std || config.remove("sys").is_some();
-    writer.implement = config.remove("implement").is_some();
-    writer.minimal = config.remove("minimal").is_some();
+    let mut writer  	= Writer::new(reader, filter, output);
+    writer.package  	= config.remove("package"  ).is_some();
+    writer.flatten  	= config.remove("flatten"  ).is_some();
+    writer.std      	= config.remove("std"      ).is_some();
+    writer.sys      	= config.remove("sys"      ).is_some() || writer.std;
+    writer.implement	= config.remove("implement").is_some();
+    writer.minimal  	= config.remove("minimal"  ).is_some();
 
-    if writer.package && writer.flatten {
-        return Err(Error::new("cannot combine `package` and `flatten` configuration values"));
-    }
+    if writer.package   && writer.flatten           	{return Err(Error::new("cannot combine `package` and `flatten` configuration values"));}
+    if writer.implement && writer.sys               	{return Err(Error::new("cannot combine `implement` and `sys` configuration values"));}
+    if let Some((key, _)) = config.first_key_value()	{return Err(Error::new(&format!("invalid configuration value `{key}`")));}
 
-    if writer.implement && writer.sys {
-        return Err(Error::new("cannot combine `implement` and `sys` configuration values"));
-    }
-
-    if let Some((key, _)) = config.first_key_value() {
-        return Err(Error::new(&format!("invalid configuration value `{key}`")));
-    }
-
-    if writer.package {
-        gen_package(&writer)
-    } else {
-        gen_file(&writer)
-    }
+    if writer.package	{gen_package(&writer)
+    } else           	{gen_file(&writer)}
 }
 
 fn gen_file(writer: &Writer) -> Result<()> {
