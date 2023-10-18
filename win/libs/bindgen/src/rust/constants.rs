@@ -76,14 +76,19 @@ fn initializer(writer: &Writer, def: Field) -> Option<(TokenStream,HashMap<Strin
     let mut input = value.as_str();
     let Type::TypeDef(def, _) = writer.reader.field_type(def, None) else { unimplemented!();};
     let mut result = quote! {};
+    let mut result_map:HashMap<String,(String,String,String)>	= HashMap::new();
 
     for field in writer.reader.type_def_fields(def) {
-        let (value, rest) = field_initializer(writer, field, input);
+        let (value, rest, nm_val_type) = field_initializer(writer, field, input);
         input = rest;
         result.combine(&value);
+        if let Some((nm,val,type_nm,type_prim)) = nm_val_type {
+            result_map.insert(nm.as_str().to_string(),
+                (val.as_str().to_string(),type_nm.to_string(),type_prim.to_string(),));
+        } else {}
     }
 
-    Some(result)
+    Some((result, result_map))
 }
 
 fn field_initializer<'a>(writer: &Writer, field: Field, input: &'a str) -> (TokenStream, &'a str) {
@@ -93,7 +98,10 @@ fn field_initializer<'a>(writer: &Writer, field: Field, input: &'a str) -> (Toke
         Type::GUID => {
             let (literals, rest) = read_literal_array(input, 11);
             let value = writer.guid(&GUID::from_string_args(&literals));
-            (quote! { #name: #value, }, rest)
+            let type_ = Type::GUID;
+            let type_nm = "GUID".to_string();
+            let type_prim = type_to_primitive(writer.reader, &type_);
+            (quote! { #name : #value, }, rest, Some((name,value,type_nm,type_prim.to_string())))
         }
         Type::Win32Array(_, len) => {
             let (literals, rest) = read_literal_array(input, len);
@@ -102,8 +110,11 @@ fn field_initializer<'a>(writer: &Writer, field: Field, input: &'a str) -> (Toke
         }
         _ => {
             let (literal, rest) = read_literal(input);
+            let type_ = &writer.reader.field_type(field,None);
+            let type_nm = type_prim_to_str(&type_);
+            let type_prim = type_to_primitive(writer.reader, &type_);
             let literal: TokenStream = literal.into();
-            (quote! { #name: #literal, }, rest)
+            (quote! { #name: #literal, }, rest, Some((name,literal,type_nm.to_string(),type_prim.to_string())))
         }
     }
 }
