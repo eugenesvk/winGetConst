@@ -71,17 +71,10 @@ pub fn writer(writer: &Writer, def: Field) -> TokenStream {
     } else {quote! {}}
 }
 
-fn initializer(writer: &Writer, def: Field) -> Option<TokenStream> {
-    let Some(value) = constant(writer, def) else {
-        return None;
-    };
-
+fn initializer(writer: &Writer, def: Field) -> Option<(TokenStream,HashMap<String,(String,String,String)>)> {
+    let Some(value) = constant(writer, def) else { return None; };
     let mut input = value.as_str();
-
-    let Type::TypeDef(def, _) = writer.reader.field_type(def, None) else {
-        unimplemented!();
-    };
-
+    let Type::TypeDef(def, _) = writer.reader.field_type(def, None) else { unimplemented!();};
     let mut result = quote! {};
 
     for field in writer.reader.type_def_fields(def) {
