@@ -239,9 +239,11 @@ fn main() {
 
   // 4 Try parsing WinMD files
   _ = r#"
-  fin   	= r'./win/libs/bindgen/default/Windows.Wdk.winmd'
   fout  	= r'./test_data/win_bindgen.rs'
   filter	= r'Windows.Wdk.System.Registry'
+  cargo run -- --out @(fout) --filter @(filter)
+  // ↓ not needed since 'metadata' feature already includes all .winmd files
+  fin	= r'./win/libs/bindgen/default/Windows.Wdk.winmd'
   cargo run -- --in @(fin) --out @(fout) --filter @(filter)
   "#;
 
