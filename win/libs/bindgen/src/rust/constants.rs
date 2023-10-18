@@ -21,9 +21,15 @@ pub fn writer(writer: &Writer, def: Field) -> TokenStream {
             if ty == Type::String {
                 if field_is_ansi(writer.reader, def)
                       	{let value = writer.value(        &writer.reader.constant_value(constant));
-                      	quote! {#name #tab PCSTR  #tab str #tab #value;}
+                      	let type_ = Type::PCSTR;
+                      	let type_nm = writer.type_name(&type_);
+                      	let type_prim = type_to_primitive(writer.reader, &type_);
+                      	quote! {#name #tab #type_nm  #tab #type_prim #tab #value;}
                 } else	{let value = writer.value(        &writer.reader.constant_value(constant));
-                      	quote! {#name #tab PCWSTR #tab str #tab #value;}}
+                      	let type_ = Type::PCWSTR;
+                      	let type_nm = writer.type_name(&type_);
+                      	let type_prim = type_to_primitive(writer.reader, &type_);
+                      	quote! {#name #tab #type_nm #tab #type_prim #tab #value;}}
             } else    	{let value_t = writer.typed_value(&writer.reader.constant_value(constant));
                       	quote! {#name #tab #value_t;}}
                       	// pub const D3DKMT_SUBKEY_DX9: PCWSTR = "DX9";
@@ -62,8 +68,10 @@ pub fn writer(writer: &Writer, def: Field) -> TokenStream {
         let value = writer.guid(&guid);
         // pub const GUID_DEVINTERFACE_GRAPHICSPOWER: ::windows_core::GUID = ::windows_core::GUID::from_u128(0xea5c6870_e93c_4588_bef1_fec42fc9429a);
         // GUID_DEVINTERFACE_GRAPHICSPOWER GUID {ea5c6870-e93c-4588-bef1-fec42fc9429a}
-        let guid = writer.type_name(&Type::GUID);
-        quote! {#name #tab #guid #tab str #tab #value;}
+        let type_ = Type::GUID;
+        let type_nm = writer.type_name(&type_);
+        let type_prim = type_to_primitive(writer.reader, &type_);
+        quote! {#name #tab #type_nm #tab #type_prim #tab #value;}
     } else if let Some((value, nm_val)) = initializer(writer, def) {
         let kind = writer.type_default_name(&ty);
         let mut result = quote! {};
