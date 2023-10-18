@@ -63,8 +63,8 @@ pub fn writer(writer: &Writer, def: Field) -> TokenStream {
         // pub const GUID_DEVINTERFACE_GRAPHICSPOWER: ::windows_core::GUID = ::windows_core::GUID::from_u128(0xea5c6870_e93c_4588_bef1_fec42fc9429a);
         // GUID_DEVINTERFACE_GRAPHICSPOWER GUID {ea5c6870-e93c-4588-bef1-fec42fc9429a}
         let guid = writer.type_name(&Type::GUID);
-        let guid = TokenStream("GUID".to_string());
-        quote! {#name #tab #guid #tab str #tab #value;} // todo get actual guid value
+        quote! {#name #tab #guid #tab str #tab #value;}
+    } else if let Some((value, nm_val)) = initializer(writer, def) {
     } else if let Some(value) = initializer(writer, def) {
         let kind = writer.type_default_name(&ty);
         quote! {#name #tab #kind #tab _ { #value};} // todo get primivite
