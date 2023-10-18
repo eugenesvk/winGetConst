@@ -137,6 +137,7 @@ use std::fmt::Write;
 use try_format::*;
 use writer::*;
 
+pub const clsid_:&str = "CLSID_";
 fn namespace(writer: &Writer, tree: &Tree) -> String {
     let writer = &mut writer.clone();
     writer.namespace = tree.namespace;
@@ -212,21 +213,19 @@ fn namespace(writer: &Writer, tree: &Tree) -> String {
                     TypeKind::Interface => {}, //types.entry(kind).or_default().entry(name).or_default().combine(&interfaces::writer(writer, def)),
                     TypeKind::Enum => {}, //types.entry(kind).or_default().entry(name).or_default().combine(&enums::writer(writer, def)),
                     TypeKind::Struct => {
-                        // if writer.reader.type_def_fields(def).next().is_none() {
-                        //     if let Some(guid) = type_def_guid(writer.reader, def) {
-                        //         let ident = to_ident(name);
-                        //         let value = writer.guid(&guid);
-                        //         let guid = writer.type_name(&Type::GUID);
-                        //         // let cfg = type_def_cfg(writer.reader, def, &[]);
-                        //         // let doc = writer.cfg_doc(&cfg);
-                        //             // #doc
-                        //         let constant = quote! {
-                        //             pub const #ident: #guid = #value;
-                        //         };
-                        //         // types.entry(TypeKind::Class).or_default().entry(name).or_default().combine(&constant);
-                        //         continue;
-                        //     }
-                        // }
+                        if writer.reader.type_def_fields(def).next().is_none() { // CLSID
+                            // "The way I handle this is to only treat it as a CLSID if the struct has zero fields." https://github.com/microsoft/win32metadata/issues/737#issuecomment-964404006
+                            if let Some(guid) = type_def_guid(writer.reader, def) {
+                                let ident = to_ident(name);
+                                let value = writer.guid(&guid);
+                                let type_ = Type::GUID;
+                                let type_nm = writer.type_name(&type_);
+                                let type_prim = type_to_primitive(writer.reader, &type_);
+                                let constant = quote! {#clsid_ #ident #tab #type_nm #tab #type_prim #tab #value;};
+                                types.entry(TypeKind::Class).or_default().entry(name).or_default().combine(&constant);
+                                continue;
+                            }
+                        }
                         // types.entry(kind).or_default().entry(name).or_default().combine(&structs::writer(writer, def));
                     }
                     TypeKind::Delegate => {}, //types.entry(kind).or_default().entry(name).or_default().combine(&delegates::writer(writer, def)),
