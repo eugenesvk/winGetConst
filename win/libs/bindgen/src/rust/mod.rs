@@ -127,6 +127,8 @@ use try_format::*;
 use writer::*;
 
 pub const clsid_:&str = "CLSID_";
+pub const iid_  :&str = "IID_";
+pub const guid0 :&str = "{00000000-0000-0000-0000-000000000000}";
 fn namespace(writer: &Writer, tree: &Tree) -> String {
     let writer = &mut writer.clone();
     writer.namespace = tree.namespace;
