@@ -155,7 +155,6 @@ fn namespace(writer: &Writer, tree: &Tree) -> String {
         }
     }
 
-    // let mut functions = BTreeMap::<&str, TokenStream>::new();
     let mut types = BTreeMap::<TypeKind, BTreeMap<&str, TokenStream>>::new();
 
     for item in writer.reader.namespace_items(writer.namespace, writer.filter) {
@@ -209,10 +208,6 @@ fn namespace(writer: &Writer, tree: &Tree) -> String {
             }
         }
     }
-
-    // for function in functions.values() {
-    //     tokens.combine(function);
-    // }
 
     for ty in types.values().flat_map(|v| v.values()) {
         tokens.combine(ty);
