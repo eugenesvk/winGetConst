@@ -14,6 +14,14 @@ The parsing relied on a [Trustfall adapter library](https://docs.rs/trustfall-ru
 
 Resulting tab-separated data is at [windows_sys non-blank 112k constants](../../raw/data/data/winConst_Valid_112k.txt.rar) and with added extra data from [a Ziggle tool](https://www.autohotkey.com/boards/viewtopic.php?f=83&t=99581) at [windows_sys+ziggle 175k constants](../../raw/data/data/winConst_Valid_ziggle_175k.rar)
 
+Constant structs like `DEVPKEY_Device_ActivityId`(type `DEVPROPKEY`) with fields `fmtid`(`Guid`) and `pid`(`uint`) are stored as a full string representation as well as individual fields (`_`-appended to the constant name), e.g.:
+```
+Name                           	TypeNative	TypePrimitive	Value
+DEVPKEY_Device_ActivityId      	DEVPROPKEY	_            	{fmtid:{c50a3f10-aa5c-4247-b830-d6a6f8eaa310},pid:4,}
+DEVPKEY_Device_ActivityId_fmtid	GUID      	str          	{c50a3f10-aa5c-4247-b830-d6a6f8eaa310}
+DEVPKEY_Device_ActivityId_pid  	u32       	u32          	4
+```
+
 ## Install
 
 ## Use
