@@ -12,6 +12,7 @@ mod constants;
 mod enums;
 mod handles;
 mod implements;
+mod interfaces;
 mod method_names;
 mod standalone;
 mod try_format;
@@ -199,7 +200,7 @@ fn namespace(writer: &Writer, tree: &Tree) -> String {
                             // types.entry(kind).or_default().insert(name, classes::writer(writer, def));
                         // }
                     }
-                    TypeKind::Interface => {}, //types.entry(kind).or_default().entry(name).or_default().combine(&interfaces::writer(writer, def)),
+                    TypeKind::Interface => types.entry(kind).or_default().entry(name).or_default().combine(&interfaces::writer(writer, def)),
                     TypeKind::Enum => {}, //types.entry(kind).or_default().entry(name).or_default().combine(&enums::writer(writer, def)),
                     TypeKind::Struct => {
                         if writer.reader.type_def_fields(def).next().is_none() { // CLSID
