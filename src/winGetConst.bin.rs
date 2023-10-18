@@ -227,7 +227,7 @@ fn main() {
   let crate_rustdoc_path 	:&Path	= Path::new("./test_data/pub_module_level_const_missing_mod.json"); // short crate to use for testing instead of the huge ↓
   let crate_rustdoc_path 	:&Path	= Path::new("./test_data/windows_sys_0.48.0.json");
   let query_path         	:&Path	= Path::new("./src/query/query_const.ron");
-  let _ = rustdoc_find_consts(&crate_rustdoc_path,&query_path);
+  // let _ = rustdoc_find_consts(&crate_rustdoc_path,&query_path);
 
   // 2 Compares winConst files ↑ to a ziggle database and generates lists of differences (extra constants, missing constants, constants with different values)
   // compare_this_to_ziggle();
