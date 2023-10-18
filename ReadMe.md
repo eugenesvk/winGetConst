@@ -16,13 +16,17 @@ Resulting tab-separated data is at [windows_sys non-blank 112k constants](../../
 
 ## Use
 
+- the output data file has 4 tab-separated columns: `name` `type` `type_primitive` `value`, e.g.,
+  - `D3DDDIFMT_X8R8G8B8	D3DDDIFORMAT	u32	22`for
+  - WinMD: `D3DDDIFMT_X8R8G8B8 = 22u` in `enum D3DDDIFORMAT: uint`
+- enums use underlying type (primitive converted, rest are `_`)
 - Constant structs like `DEVPKEY_Device_ActivityId`(type `DEVPROPKEY`) with fields `fmtid`(`Guid`) and `pid`(`uint`) are stored as a full string representation as well as individual fields (`_`-appended to the constant name), e.g.:
-```
-Name                           	TypeNative	TypePrimitive	Value
-DEVPKEY_Device_ActivityId      	DEVPROPKEY	_            	{fmtid:{c50a3f10-aa5c-4247-b830-d6a6f8eaa310},pid:4,}
-DEVPKEY_Device_ActivityId_fmtid	GUID      	str          	{c50a3f10-aa5c-4247-b830-d6a6f8eaa310}
-DEVPKEY_Device_ActivityId_pid  	u32       	u32          	4
-```
+  ```
+  Name                           	TypeNative	TypePrimitive	Value
+  DEVPKEY_Device_ActivityId      	DEVPROPKEY	_            	{fmtid:{c50a3f10-aa5c-4247-b830-d6a6f8eaa310},pid:4,}
+  DEVPKEY_Device_ActivityId_fmtid	GUID      	str          	{c50a3f10-aa5c-4247-b830-d6a6f8eaa310}
+  DEVPKEY_Device_ActivityId_pid  	u32       	u32          	4
+  ```
 
 ## Known issues
 
