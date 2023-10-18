@@ -80,6 +80,9 @@ fn initializer(writer: &Writer, def: Field) -> Option<(TokenStream,HashMap<Strin
 
     for field in writer.reader.type_def_fields(def) {
         let (value, rest, nm_val_type) = field_initializer(writer, field, input);
+        // println!("field {:?}, input {:?}, rest {:?}, value {:?}", &field, &input, &rest, &value);
+        // field Field(Row{row:119991,file:1}), input "{3305783056, 43612, 16967, 184, 48, 214, 166, 248, 234, 163, 16}, 4", rest ", 4", value TokenStream("fmtid:{c50a3f10-aa5c-4247-b830-d6a6f8eaa310},")
+        // field Field(Row{row:119992,file:1}), input ", 4", rest "", value TokenStream("pid:4,")
         input = rest;
         result.combine(&value);
         if let Some((nm,val,type_nm,type_prim)) = nm_val_type {
@@ -97,10 +100,14 @@ fn field_initializer<'a>(writer: &Writer, field: Field, input: &'a str) -> (Toke
     match writer.reader.field_type(field, None) {
         Type::GUID => {
             let (literals, rest) = read_literal_array(input, 11);
+            // println!("literals {:?}, rest {:?}", literals, rest);
+              // [Constant("{3305783056,43612,16967,184,48,214,166,248,234,163,16},4")]public static DEVPROPKEY DEVPKEY_Device_ActivityId;
+              //   literals["3305783056","43612","16967","184","48","214","166","248","234","163","16"],rest",4"
             let value = writer.guid(&GUID::from_string_args(&literals));
             let type_ = Type::GUID;
             let type_nm = "GUID".to_string();
             let type_prim = type_to_primitive(writer.reader, &type_);
+            // println!("name={:?} value= {:?} type_nm={:?} type_prim={:?}",&name,&value,&type_nm,&type_prim); //name=TokenStream("fmtid") value= TokenStream("{c50a3f10-aa5c-4247-b830-d6a6f8eaa310}") type_nm="GUID" type_prim="str"
             (quote! { #name : #value, }, rest, Some((name,value,type_nm,type_prim.to_string())))
         }
         Type::Win32Array(_, len) => {
@@ -113,6 +120,7 @@ fn field_initializer<'a>(writer: &Writer, field: Field, input: &'a str) -> (Toke
             let type_ = &writer.reader.field_type(field,None);
             let type_nm = type_prim_to_str(&type_);
             let type_prim = type_to_primitive(writer.reader, &type_);
+            // println!("input={:?} literal= {:?} rest={:?} type_={:?} type_nm={:?} type_prim={:?}",&input,&literal,&rest,&type_,&type_nm,&type_prim); //input=", 4" literal= "4" rest="" type_=U32 type_nm="u32" type_prim="u32"
             let literal: TokenStream = literal.into();
             (quote! { #name: #literal, }, rest, Some((name,literal,type_nm.to_string(),type_prim.to_string())))
         }
