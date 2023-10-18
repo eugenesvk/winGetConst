@@ -161,6 +161,39 @@ fn namespace(writer: &Writer, tree: &Tree) -> String {
         // println!("name = {:?}",&name); //"DWMFLIP3D_DEFAULT"
         match item {
             Item::Type(def) => {
+                // "Public¦Sealed¦SequentialLayout¦" "FaxOutgoingJobs" "Windows.Win32.Devices.Fax" "" "" "" "" "" None None "" "" ""
+                // "Public¦Abstract¦Interface¦" "IFaxOutgoingJobs" "Windows.Win32.Devices.Fax" "" "" "" "" "" None None "" "" ""
+                // NOT CLSID [issue](https://github.com/microsoft/win32metadata/issues/737): `"Public¦Sealed¦SequentialLayout¦" "CONFIGURATION_ENTRY" "Windows.Win32.System.Iis" "" "" "" "" "" None None "" "" ""`
+                // let type_def_flags = writer.reader.type_def_flags(def);
+                // let mut type_def_flags_str = "".to_string();
+                // if type_def_flags.contains(TypeAttributes::Public)          	{type_def_flags_str += "Public¦"};
+                // if type_def_flags.contains(TypeAttributes::ExplicitLayout)  	{type_def_flags_str += "ExplicitLayout¦"};
+                // if type_def_flags.contains(TypeAttributes::Abstract)        	{type_def_flags_str += "Abstract¦"};
+                // if type_def_flags.contains(TypeAttributes::Sealed)          	{type_def_flags_str += "Sealed¦"};
+                // if type_def_flags.contains(TypeAttributes::WindowsRuntime)  	{type_def_flags_str += "WindowsRuntime¦"};
+                // if type_def_flags.contains(TypeAttributes::Interface)       	{type_def_flags_str += "Interface¦"};
+                // if type_def_flags.contains(TypeAttributes::SequentialLayout)	{type_def_flags_str += "SequentialLayout¦"};
+                // if type_def_flags.contains(TypeAttributes::Import)          	{type_def_flags_str += "Import¦"};
+                // println!("{:?} {:?} {:?} {:?} {:?} {:?} {:?} {:?} {:?} {:?} {:?} {:?} {:?} {:?}"
+                // ,type_def_flags_str
+                // // fn type_def_flags(&self, row: TypeDef) -> TypeAttributes: impl TypeAttributes {Public ExplicitLayout Abstract Sealed WindowsRuntime Interface SequentialLayout Import}
+                // ,writer.reader.type_def_name(def)
+                // ,writer.reader.type_def_namespace(def)
+                // ,"" //writer.reader.type_def_extends(def)
+                // ,"" //writer.reader.type_def_methods(def)
+                // ,"" //writer.reader.type_def_fields(def)
+                // ,"" //writer.reader.type_def_generics(def)
+                // ,"" //writer.reader.type_def_interface_impls(def)
+                // ,writer.reader.type_def_enclosing_type(def)
+                // ,writer.reader.type_def_class_layout(def)
+
+                // ,writer.reader.type_def_kind(def)
+
+                // ,"" //writer.reader.type_ref_name(def)
+                // ,"" //writer.reader.type_ref_namespace(def)
+                // ,"" //writer.reader.type_ref_resolution_scope(def)
+                // );
+
                 let type_name = writer.reader.type_def_type_name(def);
                 if REMAP_TYPES.iter().any(|(x, _)| x == &type_name) {
                     continue;
