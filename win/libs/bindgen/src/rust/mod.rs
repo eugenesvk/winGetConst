@@ -11,7 +11,6 @@ mod com_methods;
 mod constants;
 mod enums;
 mod handles;
-mod implements;
 mod interfaces;
 mod method_names;
 mod standalone;
@@ -259,7 +258,8 @@ fn namespace_impl(writer: &Writer, tree: &Tree) -> String {
             if writer.reader.type_def_kind(def) != TypeKind::Interface {
                 continue;
             }
-            let tokens = implements::writer(writer, def);
+            // let tokens = implements::writer(writer, def);
+            let tokens = quote!{};
 
             if !tokens.is_empty() {
                 types.insert(type_name.name, tokens);
