@@ -643,63 +643,16 @@ impl<'a> Writer<'a> {
     pub fn interface_trait(&self, def: TypeDef, generics: &[Type], ident: &TokenStream, constraints: &TokenStream, features: &TokenStream, has_unknown_base: bool) -> TokenStream {
         if let Some(default) = type_def_default_interface(self.reader, def) {
             let default_name = self.type_name(&default);
-            let vtbl = self.type_vtbl_name(&default);
-            quote! {
-                #features
-                impl<#constraints> ::core::clone::Clone for #ident {
-                    fn clone(&self) -> Self {
-                        Self(self.0.clone())
-                    }
-                }
-                #features
-                unsafe impl ::windows_core::Interface for #ident {
-                    type Vtable = #vtbl;
-                }
-                #features
-                unsafe impl ::windows_core::ComInterface for #ident {
-                    const IID: ::windows_core::GUID = <#default_name as ::windows_core::ComInterface>::IID;
-                }
-            }
+            quote! {#iid_ #ident #tab GUID #tab str #tab #default_name;}
         } else {
-            let vtbl = self.type_def_vtbl_name(def, generics);
             let guid = if generics.is_empty() {
                 match type_def_guid(self.reader, def) {
-                    Some(guid) => self.guid(&guid),
-                    None => {
-                        quote! {
-                            ::windows_core::GUID::zeroed()
-                        }
-                    }
-                }
-            } else {
-                quote! {
-                    ::windows_core::GUID::from_signature(<Self as ::windows_core::RuntimeType>::SIGNATURE)
-                }
-            };
+                    Some(guid)	=> self.guid(&guid),
+                    None      	=> {quote! { #guid0}}}
+            } else {quote! {::windows_core::GUID::from_signature(<Self as ::windows_core::RuntimeType>::SIGNATURE)}};
 
-            let phantoms = self.generic_phantoms(generics);
-
-            let mut tokens = quote! {
-                #features
-                unsafe impl<#constraints> ::windows_core::Interface for #ident {
-                    type Vtable = #vtbl;
-                }
-                #features
-                impl<#constraints> ::core::clone::Clone for #ident {
-                    fn clone(&self) -> Self {
-                        Self(self.0.clone(), #phantoms)
-                    }
-                }
-            };
-
-            if has_unknown_base {
-                tokens.combine(&quote! {
-                    #features
-                    unsafe impl<#constraints> ::windows_core::ComInterface for #ident {
-                        const IID: ::windows_core::GUID = #guid;
-                    }
-                });
-            }
+            let mut tokens = quote! {};
+            if has_unknown_base {tokens.combine(&quote! {#iid_ #ident #tab GUID #tab str #tab #guid;});}
 
             tokens
         }
