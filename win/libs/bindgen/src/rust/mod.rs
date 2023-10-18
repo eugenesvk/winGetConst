@@ -158,6 +158,7 @@ fn namespace(writer: &Writer, tree: &Tree) -> String {
     let mut types = BTreeMap::<TypeKind, BTreeMap<&str, TokenStream>>::new();
 
     for item in writer.reader.namespace_items(writer.namespace, writer.filter) {
+        // println!("name = {:?}",&name); //"DWMFLIP3D_DEFAULT"
         match item {
             Item::Type(def) => {
                 let type_name = writer.reader.type_def_type_name(def);
@@ -204,6 +205,8 @@ fn namespace(writer: &Writer, tree: &Tree) -> String {
             }
             Item::Const(def) => {
                 let name = writer.reader.field_name(def);
+                // println!("name = {:?}",&name); //"DWMFLIP3D_DEFAULT"
+                // println!("append = {:?}",&constants::writer(writer, def)); //TokenStream("DWMFLIP3D_DEFAULT¦DWMFLIP3DWINDOWPOLICY¦i32¦0")
                 types.entry(TypeKind::Class).or_default().entry(name).or_default().combine(&constants::writer(writer, def));
             }
         }
