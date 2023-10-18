@@ -20,6 +20,7 @@ Resulting tab-separated data is at [windows_sys non-blank 112k constants](../../
   - `D3DDDIFMT_X8R8G8B8	D3DDDIFORMAT	u32	22`for
   - WinMD: `D3DDDIFMT_X8R8G8B8 = 22u` in `enum D3DDDIFORMAT: uint`
 - enums use underlying type (primitive converted, rest are `_`)
+- Constant structs with only GUID `FaxAccountFolders` (no fields) are prefixed with `CLSID_`
 - Constant structs like `DEVPKEY_Device_ActivityId`(type `DEVPROPKEY`) with fields `fmtid`(`Guid`) and `pid`(`uint`) are stored as a full string representation as well as individual fields (`_`-appended to the constant name), e.g.:
   ```
   Name                           	TypeNative	TypePrimitive	Value
