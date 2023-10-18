@@ -675,19 +675,20 @@ pub fn type_prim_to_str(ty: &Type) -> &'static str {
 }
 pub fn type_to_primitive(reader: &Reader, ty: &Type) -> &'static str {
     match ty {
-        Type::HRESULT                                                	=> "i32",
-        Type::PCSTR | Type::PCWSTR                                   	=> "str", // todo: or use PTR?
-        Type::TypeDef(row,_)                                         	=> {
-          if type_def_is_handle(reader, *row)                        	{"isize" // NativeTypedef e.g. HCS_CALLBACK IntPtr
-          } else if reader.type_def_kind(*row) == TypeKind::Enum     	{
-            // reader.type_def_type_name(*row)                       	Windows.Win32.AI.MachineLearning.DirectML.DML_TENSOR_TYPE
-            // reader.type_def_size(*row)                            	4
-            // reader.type_def_underlying_type(*row)                 	I32
+        Type::HRESULT                                           	=> "i32",
+        Type::PCSTR | Type::PCWSTR                              	=> "str", // todo: or use PTR?
+        Type::GUID                                              	=> "str",
+        Type::TypeDef(row,_)                                    	=> {
+          if type_def_is_handle(reader, *row)                   	{"isize" // NativeTypedef e.g. HCS_CALLBACK IntPtr
+          } else if reader.type_def_kind(*row) == TypeKind::Enum	{
+            // reader.type_def_type_name(*row)                  	Windows.Win32.AI.MachineLearning.DirectML.DML_TENSOR_TYPE
+            // reader.type_def_size(*row)                       	4
+            // reader.type_def_underlying_type(*row)            	I32
             let und_type = reader.type_def_underlying_type(*row);
             type_prim_to_str(&und_type)
-          } else	{"_"}
+          } else	{type_prim_to_str(&ty)}
         },
-        _	=> "_",
+        _	=> type_prim_to_str(&ty),
     }
 }
 
