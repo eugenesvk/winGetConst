@@ -70,7 +70,9 @@ pub fn writer(writer: &Writer, def: Field) -> TokenStream {
         let val = quote! {#name #tab #kind #tab _ #tab {#value};}; result.combine(&val); // combo type, no primitive
         if nm_val.len() > 0 {
             for (k,(v,type_nm,type_prim)) in nm_val {
+                // println!("v={:?} type_nm={:?} type_prim={:?}",&v,&type_nm,&type_prim); // v="{c50a3f10-aa5c-4247-b830-d6a6f8eaa310}" type_nm="GUID" type_prim="str"
                 let val = quote! {#name _ #k #tab #type_nm #tab #type_prim #tab #v;}; result.combine(&val);
+                // DEVPKEY_Device_ActivityId_fmtid¦GUID¦str¦{c50a3f10-aa5c-4247-b830-d6a6f8eaa310}
             }
         }
         result
