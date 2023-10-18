@@ -12,6 +12,7 @@ mod constants;
 mod enums;
 mod handles;
 mod interfaces;
+mod iterators;
 mod method_names;
 mod standalone;
 mod try_format;
