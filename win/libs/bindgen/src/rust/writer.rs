@@ -704,57 +704,6 @@ impl<'a> Writer<'a> {
             tokens
         }
     }
-    pub fn interface_vtbl(&self, def: TypeDef, generics: &[Type], _ident: &TokenStream, constraints: &TokenStream, features: &TokenStream) -> TokenStream {
-        let vtbl = self.type_def_vtbl_name(def, generics);
-        let mut methods = quote! {};
-        let mut method_names = MethodNames::new();
-        method_names.add_vtable_types(self, def);
-        let phantoms = self.generic_named_phantoms(generics);
-
-        match type_def_vtables(self.reader, def).last() {
-            Some(Type::IUnknown) => methods.combine(&quote! { pub base__: ::windows_core::IUnknown_Vtbl, }),
-            Some(Type::IInspectable) => methods.combine(&quote! { pub base__: ::windows_core::IInspectable_Vtbl, }),
-            Some(Type::TypeDef(def, _)) => {
-                let vtbl = self.type_def_vtbl_name(*def, &[]);
-                methods.combine(&quote! { pub base__: #vtbl, });
-            }
-            _ => {}
-        }
-
-        for method in self.reader.type_def_methods(def) {
-            if self.reader.method_def_name(method) == ".ctor" {
-                continue;
-            }
-            let name = method_names.add(self, method);
-            let signature = method_def_signature(self.reader, self.reader.type_def_namespace(def), method, generics);
-            let mut cfg = signature_cfg(self.reader, method);
-            let signature = self.vtbl_signature(def, generics, &signature);
-            cfg.add_feature(self.reader.type_def_namespace(def));
-            let cfg_all = self.cfg_features(&cfg);
-            let cfg_not = self.cfg_not_features(&cfg);
-
-            let signature = quote! { pub #name: unsafe extern "system" fn #signature, };
-
-            if cfg_all.is_empty() {
-                methods.combine(&signature);
-            } else {
-                methods.combine(&quote! {
-                    #cfg_all
-                    #signature
-                    #cfg_not
-                    #name: usize,
-                });
-            }
-        }
-
-        quote! {
-            #features
-            #[repr(C)] #[doc(hidden)] pub struct #vtbl where #constraints {
-                #methods
-                #(pub #phantoms)*
-            }
-        }
-    }
     pub fn vtbl_signature(&self, def: TypeDef, _generics: &[Type], signature: &Signature) -> TokenStream {
         let is_winrt = self.reader.type_def_flags(def).contains(TypeAttributes::WindowsRuntime);
 
