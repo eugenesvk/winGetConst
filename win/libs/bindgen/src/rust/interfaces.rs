@@ -30,9 +30,9 @@ fn gen_win_interface(writer: &Writer, def: TypeDef) -> TokenStream {
 
     let mut tokens = quote! { };
 
-    if !is_exclusive {
-        tokens.combine(&writer.interface_winrt_trait(def, generics, &ident, &constraints, &phantoms, &features));
-    }
+    // if !is_exclusive {
+        // tokens.combine(&writer.interface_winrt_trait(def, generics, &ident, &constraints, &phantoms, &features));
+    // }
     tokens.combine(&writer.interface_trait(def, generics, &ident, &constraints, &features, has_unknown_base));
     tokens
 }
