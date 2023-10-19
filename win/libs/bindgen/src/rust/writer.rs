@@ -56,7 +56,8 @@ impl<'a> Writer<'a> {
                 };
 
                 let generics = generics.iter().map(|ty| self.type_name(ty));
-                quote! { #namespace #name #colon_separated<#(#generics),*> }
+                // quote! { #namespace #name #colon_separated<#(#generics),*> }
+                quote! {#namespace #name}
             }
         }
     }
