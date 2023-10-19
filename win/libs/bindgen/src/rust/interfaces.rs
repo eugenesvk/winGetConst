@@ -17,6 +17,7 @@ fn gen_sys_interface(writer: &Writer, def: TypeDef) -> TokenStream {
 fn gen_win_interface(writer: &Writer, def: TypeDef) -> TokenStream {
     let generics = &type_def_generics(writer.reader, def);
     let ident = writer.type_def_name(def, generics);
+    // println!("ident {:?}",&ident); // IObservableVector<T> removed <T> in type_def_name
     let is_exclusive = type_def_is_exclusive(writer.reader, def);
     let phantoms = writer.generic_phantoms(generics);
     let constraints = writer.generic_constraints(generics);
