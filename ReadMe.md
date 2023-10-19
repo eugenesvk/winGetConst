@@ -28,6 +28,7 @@ Resulting tab-separated data is at [windows_sys non-blank 112k constants](../../
   DEVPKEY_Device_ActivityId_fmtid	GUID      	str          	{c50a3f10-aa5c-4247-b830-d6a6f8eaa310}
   DEVPKEY_Device_ActivityId_pid  	u32       	u32          	4
   ```
+- Generic interfaces like `IObservableVector<T>` are not included
 
 ## Known issues
 
