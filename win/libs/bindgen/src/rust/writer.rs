@@ -579,6 +579,11 @@ impl<'a> Writer<'a> {
                 if generics.is_empty()	{quote! {}
                 } else                	{quote! {#signature}}
             };
+            // todo: add some concrete types to generic interfaces based on ↓
+            // const SIGNATURE: ::windows_core::imp::ConstBuffer = ::windows_core::imp::ConstBuffer::new().push_slice(b"pinterface(").push_slice(b"{5917eb53-50b4-4a0d-b309-65862b3f1dbc}").push_slice(b";").push_other(<T as ::windows_core::RuntimeType>::SIGNATURE).push_slice(b")");
+            // let dfddf: ::windows_core::GUID = windows_core::GUID::from_signature(type_signature.as_str().into());
+            // const IID: ::windows_core::GUID = ::windows_core::GUID::from_signature(<Self as ::windows_core::RuntimeType>::SIGNATURE);}
+
             if type_signature.as_str() != ""	{quote! {#iid_ #ident #tab SIGNATURE #tab str #tab #type_signature;}
             } else                          	{quote! {}}
         } else {quote! {}}
