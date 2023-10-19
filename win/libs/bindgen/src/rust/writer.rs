@@ -572,55 +572,16 @@ impl<'a> Writer<'a> {
     pub fn interface_winrt_trait(&self, def: TypeDef, generics: &[Type], ident: &TokenStream, constraints: &TokenStream, _phantoms: &TokenStream, features: &TokenStream) -> TokenStream {
         if self.reader.type_def_flags(def).contains(TypeAttributes::WindowsRuntime) {
             let type_signature = if self.reader.type_def_kind(def) == TypeKind::Class {
-                let type_signature = Literal::byte_string(type_def_signature(self.reader, def, generics).as_bytes());
-                quote! { ::windows_core::imp::ConstBuffer::from_slice(#type_signature) }
+                let type_signature = type_def_signature(self.reader, def, generics);
+                quote! {#type_signature}
             } else {
-                let signature = Literal::byte_string(
-                    // TODO: workaround for riddle winmd generation (no attribute support)
-                    if let Some(guid) = type_def_guid(self.reader, def) { format!("{{{:#?}}}", guid) } else { "TODO".to_string() }.as_bytes(),
-                );
-
-                if generics.is_empty() {
-                    quote! { ::windows_core::imp::ConstBuffer::from_slice(#signature) }
-                } else {
-                    let generics = generics.iter().enumerate().map(|(index, g)| {
-                        let g = self.type_name(g);
-                        let semi = if index != generics.len() - 1 {
-                            Some(quote! {
-                                .push_slice(b";")
-                            })
-                        } else {
-                            None
-                        };
-
-                        quote! {
-                            .push_other(<#g as ::windows_core::RuntimeType>::SIGNATURE)
-                            #semi
-                        }
-                    });
-
-                    quote! {
-                        {
-                            ::windows_core::imp::ConstBuffer::new()
-                            .push_slice(b"pinterface(")
-                            .push_slice(#signature)
-                            .push_slice(b";")
-                            #(#generics)*
-                            .push_slice(b")")
-                        }
-                    }
-                }
+                let signature = if let Some(guid) = type_def_guid(self.reader, def) { format!("{{{:#?}}}", guid) } else { "".to_string() }; // TODO: workaround for riddle winmd generation (no attribute support)
+                if generics.is_empty()	{quote! {}
+                } else                	{quote! {#signature}}
             };
-
-            quote! {
-                #features
-                impl<#constraints> ::windows_core::RuntimeType for #ident {
-                    const SIGNATURE: ::windows_core::imp::ConstBuffer = #type_signature;
-                }
-            }
-        } else {
-            quote! {}
-        }
+            if type_signature.as_str() != ""	{quote! {#iid_ #ident #tab SIGNATURE #tab str #tab #type_signature;}
+            } else                          	{quote! {}}
+        } else {quote! {}}
     }
     pub fn runtime_name_trait(&self, def: TypeDef, _generics: &[Type], name: &TokenStream, constraints: &TokenStream, features: &TokenStream) -> TokenStream {
         if self.reader.type_def_flags(def).contains(TypeAttributes::WindowsRuntime) {
