@@ -649,7 +649,8 @@ impl<'a> Writer<'a> {
                 match type_def_guid(self.reader, def) {
                     Some(guid)	=> self.guid(&guid),
                     None      	=> {quote! { #guid0}}}
-            } else {quote! {::windows_core::GUID::from_signature(<Self as ::windows_core::RuntimeType>::SIGNATURE)}};
+            // } else {quote! {::windows_core::GUID::from_signature(<Self as ::windows_core::RuntimeType>::SIGNATURE)}};
+            } else {return quote! {}}; // todo: add generic types with some concrete types???
 
             let mut tokens = quote! {};
             if has_unknown_base {tokens.combine(&quote! {#iid_ #ident #tab GUID #tab str #tab #guid;});}
