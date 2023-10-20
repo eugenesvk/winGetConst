@@ -656,21 +656,22 @@ pub fn type_has_replacement(reader: &Reader, ty: &Type) -> bool {
 
 pub fn type_prim_to_str(ty: &Type) -> &'static str {
   match ty {
-    Type::I8   	=>  "i8",
-    Type::I16  	=> "i16",
-    Type::I32  	=> "i32",
-    Type::I64  	=> "i64",
-    Type::U8   	=>  "u8",
-    Type::U16  	=> "u16",
-    Type::U32  	=> "u32",
-    Type::U64  	=> "u64",
-    Type::F32  	=> "f32",
-    Type::F64  	=> "f64",
-    Type::ISize	=> "iSize",
-    Type::USize	=> "uSize",
-    Type::Bool 	=> "bool",
-    Type::Char 	=> "char",
-    _          	=> "_",
+    Type::I8             	=>  "i8",
+    Type::I16            	=> "i16",
+    Type::I32            	=> "i32",
+    Type::I64            	=> "i64",
+    Type::U8             	=>  "u8",
+    Type::U16            	=> "u16",
+    Type::U32            	=> "u32",
+    Type::U64            	=> "u64",
+    Type::F32            	=> "f32",
+    Type::F64            	=> "f64",
+    Type::ISize          	=> "iSize",
+    Type::USize          	=> "uSize",
+    Type::Bool           	=> "bool",
+    Type::Char           	=> "char",
+    Type::Win32Array(_,_)	=> "array",
+    _                    	=> "_",
   }
 }
 pub fn type_to_primitive(reader: &Reader, ty: &Type) -> &'static str {
@@ -678,6 +679,7 @@ pub fn type_to_primitive(reader: &Reader, ty: &Type) -> &'static str {
         Type::HRESULT                                           	=> "i32",
         Type::PCSTR | Type::PCWSTR                              	=> "str", // todo: or use PTR?
         Type::GUID                                              	=> "str",
+        Type::Win32Array(_,_)                                   	=> "array",
         Type::TypeDef(row,_)                                    	=> {
           if type_def_is_handle(reader, *row)                   	{"isize" // NativeTypedef e.g. HCS_CALLBACK IntPtr
           } else if reader.type_def_kind(*row) == TypeKind::Enum	{
