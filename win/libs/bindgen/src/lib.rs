@@ -115,9 +115,10 @@ where
     winmd::verify(&reader, &filter)?;
 
     match extension(&output) {
-        "rdl" => rdl::from_reader(&reader, &filter, config, &output)?,
-        "winmd" => winmd::from_reader(&reader, &filter, config, &output)?,
-        "rs" => rust::from_reader(&reader, &filter, config, &output)?,
+        "rdl"  	=> rdl::from_reader  (&reader, &filter, config, &output)?,
+        "winmd"	=> winmd::from_reader(&reader, &filter, config, &output)?,
+        "rs"   	=> rust::from_reader (&reader, &filter, config, &output)?,
+        ""     	=> rust::from_reader (&reader, &filter, config, &output)?,
         _ => return Err(Error::new("output extension must be one of winmd/rdl/rs")),
     }
 
