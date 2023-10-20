@@ -76,11 +76,15 @@ pub fn writer(writer: &Writer, def: Field) -> TokenStream {
         let kind = writer.type_default_name(&ty);
         let mut result = quote! {};
         let val = quote! {#name #tab #kind #tab _ #tab {#value};}; result.combine(&val); // combo type, no primitive
+        // p!("value {:?} nm_val {:?}",&value,&nm_val);
+        // SECURITY_APP_PACKAGE_AUTHORITY SID_IDENTIFIER_AUTHORITY _ {Value:[0,0,0,0,0,15,],}
+        // val TokenStream("Value:[0,0,0,0,0,1,],") nm_val {"Value": ("[0,0,0,0,0,1,]", "array", "array")}
         if nm_val.len() > 0 {
             for (k,(v,type_nm,type_prim)) in nm_val {
                 // println!("v={:?} type_nm={:?} type_prim={:?}",&v,&type_nm,&type_prim); // v="{c50a3f10-aa5c-4247-b830-d6a6f8eaa310}" type_nm="GUID" type_prim="str"
                 let val = quote! {#name _ #k #tab #type_nm #tab #type_prim #tab #v;}; result.combine(&val);
                 // DEVPKEY_Device_ActivityId_fmtid¦GUID¦str¦{c50a3f10-aa5c-4247-b830-d6a6f8eaa310}
+                // SECURITY_APP_PACKAGE_AUTHORITY_Value¦array¦array¦[0,0,0,0,0,15,]
             }
         }
         result
@@ -97,8 +101,9 @@ fn initializer(writer: &Writer, def: Field) -> Option<(TokenStream,HashMap<Strin
     for field in writer.reader.type_def_fields(def) {
         let (value, rest, nm_val_type) = field_initializer(writer, field, input);
         // println!("field {:?}, input {:?}, rest {:?}, value {:?}", &field, &input, &rest, &value);
-        // field Field(Row{row:119991,file:1}), input "{3305783056, 43612, 16967, 184, 48, 214, 166, 248, 234, 163, 16}, 4", rest ", 4", value TokenStream("fmtid:{c50a3f10-aa5c-4247-b830-d6a6f8eaa310},")
+        // field Field(Row{row:119991,file:1}), input "{3305783056,43612,16967,184,48,214,166,248,234,163,16},4", rest ", 4", value TokenStream("fmtid:{c50a3f10-aa5c-4247-b830-d6a6f8eaa310},")
         // field Field(Row{row:119992,file:1}), input ", 4", rest "", value TokenStream("pid:4,")
+        // field Field(Row{row:196811,file:1}), input"{0,0,0,0,0,15}", rest"", value TokenStream("Value:[0,0,0,0,0,15,],"),nm_val_type Some((TokenStream("Value"),TokenStream("[0,0,0,0,0,15,]"),"array","array"))
         input = rest;
         result.combine(&value);
         if let Some((nm,val,type_nm,type_prim)) = nm_val_type {
@@ -110,7 +115,8 @@ fn initializer(writer: &Writer, def: Field) -> Option<(TokenStream,HashMap<Strin
     Some((result, result_map))
 }
 
-fn field_initializer<'a>(writer: &Writer, field: Field, input: &'a str) -> (TokenStream, &'a str, Option<(TokenStream,TokenStream,String,String)>) {
+fn field_initializer<'a>(writer:&Writer, field:Field, input:&'a str) -> (TokenStream, &'a str, Option<(TokenStream,TokenStream,String,String)>) {
+    //                                                                                                          nm,val        ,type_nm,type_prim
     let name = to_ident(writer.reader.field_name(field));
 
     match writer.reader.field_type(field, None) {
