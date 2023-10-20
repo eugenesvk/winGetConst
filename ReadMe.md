@@ -23,10 +23,12 @@ Resulting tab-separated data is at [windows_sys non-blank 112k constants](../../
 - Constant structs with only GUID `FaxAccountFolders` (no fields) are prefixed with `CLSID_`
 - Constant structs like `DEVPKEY_Device_ActivityId`(type `DEVPROPKEY`) with fields `fmtid`(`Guid`) and `pid`(`uint`) are stored as a full string representation as well as individual fields (`_`-appended to the constant name), e.g.:
   ```
-  Name                           	TypeNative	TypePrimitive	Value
-  DEVPKEY_Device_ActivityId      	DEVPROPKEY	_            	{fmtid:{c50a3f10-aa5c-4247-b830-d6a6f8eaa310},pid:4,}
-  DEVPKEY_Device_ActivityId_fmtid	GUID      	str          	{c50a3f10-aa5c-4247-b830-d6a6f8eaa310}
-  DEVPKEY_Device_ActivityId_pid  	u32       	u32          	4
+  Name                                	TypeNative              	TypePrimitive	Value
+  DEVPKEY_Device_ActivityId           	DEVPROPKEY              	_            	{fmtid:{c50a3f10-aa5c-4247-b830-d6a6f8eaa310},pid:4,}
+  DEVPKEY_Device_ActivityId_fmtid     	GUID                    	str          	{c50a3f10-aa5c-4247-b830-d6a6f8eaa310}
+  DEVPKEY_Device_ActivityId_pid       	u32                     	u32          	4
+  SECURITY_APP_PACKAGE_AUTHORITY      	SID_IDENTIFIER_AUTHORITY	_            	{Value:[0,0,0,0,0,15,],}
+  SECURITY_APP_PACKAGE_AUTHORITY_Value	_                       	array        	[0,0,0,0,0,15,]
   ```
 - Generic interfaces like `IObservableVector<T>` are not included
 
