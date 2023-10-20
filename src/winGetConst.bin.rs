@@ -244,33 +244,51 @@ Options:
   }
 }
 
+fn rustdocs_to_tsv() { /*! Parse Windows_sys crate rustdocs generated via cargo-semver-checks and saves results to a simple tab-separated name⭾value⭾type file
+    winConst_All.txt    	all constants
+    winConst_Blank.txt  	constants where values are blank (_) as they're not in the rustdocs
+    winConst_Valid.txt  	all non-blank constants */
+  let crate_rustdoc_path	:&Path	= Path::new("./test_data/pub_module_level_const_missing_mod.json"); // short crate to use for testing instead of the huge ↓
+  let crate_rustdoc_path	:&Path	= Path::new("./test_data/windows_sys_0.48.0.json");
+  let query_path        	:&Path	= Path::new("./src/query/query_const.ron");
+  let _ = rustdoc_find_consts(&crate_rustdoc_path,&query_path);
+}
+
 fn main() {
-  // 1 Parses Windows_sys crate rustdocs generated via cargo-semver-checks and saves results to a simple tab-separated name⭾value⭾type file
-    // winConst_All.txt  	all constants
-    // winConst_Blank.txt	constants where values are blank (_) as they're not in the rustdocs
-    // winConst_Valid.txt	all non-blank constants
-  let crate_rustdoc_path 	:&Path	= Path::new("./test_data/pub_module_level_const_missing_mod.json"); // short crate to use for testing instead of the huge ↓
-  let crate_rustdoc_path 	:&Path	= Path::new("./test_data/windows_sys_0.48.0.json");
-  let query_path         	:&Path	= Path::new("./src/query/query_const.ron");
-  // let _ = rustdoc_find_consts(&crate_rustdoc_path,&query_path);
-
-  // 2 Compares winConst files ↑ to a ziggle database and generates lists of differences (extra constants, missing constants, constants with different values)
-  // compare_this_to_ziggle();
-
-  // 3 Add missing constants from the ziggle database
-  // merge_this_with_ziggle();
-
-  // test1()
-
-  // 4 Try parsing WinMD files
-  _ = r#"
-  fout  	= r'./test_data/win_bindgen.rs'
-  filter	= r'Windows.Wdk.System.Registry'
-  cargo run -- --out @(fout) --filter @(filter)
-  // ↓ not needed since 'metadata' feature already includes all .winmd files
-  fin	= r'./win/libs/bindgen/default/Windows.Wdk.winmd'
-  cargo run -- --in @(fin) --out @(fout) --filter @(filter)
-  "#;
-
-  riddle();
+  let mut args: Vec<String> = std::env::args().skip(1).collect();
+  let ziggle_p	:&Path	= Path::new("../winAPIconst/data/ziggle_clean64.txt");
+  if        let Some(pos) = args.iter().position(|x| *x == "wmd") {
+    args.remove(pos);
+    p!("converting WinMD to TSV");
+    winmd_to_tsv(&args); // 1 WinMD → TSV
+    _ = r#"
+    fout  	= r'./test_data/win_bindgen'
+    filter	= r'Windows.Wdk.System.Registry'
+    cargo run -- --out @(fout) --filter @(filter)
+    // ↓ not needed since 'metadata' feature already includes all .winmd files
+    fin	= r'./win/libs/bindgen/default/Windows.Wdk.winmd'
+    cargo run -- --in @(fin) --out @(fout) --filter @(filter)
+    "#;
+  } else if let Some(pos) = args.iter().position(|x| *x == "rdoc") {
+    p!("Comparing WinMD to Ziggle");
+    // compare_winmd_to_ziggle();	// 2 Compares winConst files ↑ to a ziggle database and generates lists of differences (extra constants, missing constants, constants with different values)
+  } else if let Some(pos) = args.iter().position(|x| *x == "rdoc") {
+    p!("converting Windows_sys rustdocs to TSV");
+    rustdocs_to_tsv();	// 1 Windows_sys rustdocs → TSV
+  } else if let Some(pos) = args.iter().position(|x| *x == "wmd2ziggle") {
+    let this_p:&Path	= Path::new("./data/winConst_bindgen_All_185k");
+    compare_this_to_ziggle((ziggle_p,2),(this_p,4),None); // 2 Compares winConst files ↑ to a ziggle database and generates lists of differences (extra constants, missing constants, constants with different values)
+  } else if let Some(pos) = args.iter().position(|x| *x == "rdoc2ziggle") {
+    let this_p      	:&Path	= Path::new("./data/winConst_Valid.txt");
+    let this_blank_p	:&Path	= Path::new("./data/winConst_Blank.txt");
+    compare_this_to_ziggle((ziggle_p,2),(this_p,2),Some((this_blank_p,2))); // 2 Compares winConst files ↑ to a ziggle database and generates lists of differences (extra constants, missing constants, constants with different values)
+  } else if let Some(pos) = args.iter().position(|x| *x == "merge2ziggle") {
+    let col_i = 2;
+    merge_this_with_ziggle(col_i);	// 3 Add missing constants from the ziggle database
+  } else if let Some(pos) = args.iter().position(|x| *x == "test") {
+    // test1()
+    // let tsv		= "21\t22\t23".to_string();
+    // let result = get_col_val(tsv,SearchOpts::default().add_option(SearchOpt::ValInd(2)));
+    // p!("{:?}",result);
+  }
 }
