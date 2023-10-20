@@ -100,7 +100,7 @@ fn initializer(writer: &Writer, def: Field) -> Option<(TokenStream,HashMap<Strin
 
     for field in writer.reader.type_def_fields(def) {
         let (value, rest, nm_val_type) = field_initializer(writer, field, input);
-        // println!("field {:?}, input {:?}, rest {:?}, value {:?}", &field, &input, &rest, &value);
+        // p!("field {:?}, input {:?}, rest {:?}, value {:?}, nm_val_type {:?}", &field, &input, &rest, &value, &nm_val_type);
         // field Field(Row{row:119991,file:1}), input "{3305783056,43612,16967,184,48,214,166,248,234,163,16},4", rest ", 4", value TokenStream("fmtid:{c50a3f10-aa5c-4247-b830-d6a6f8eaa310},")
         // field Field(Row{row:119992,file:1}), input ", 4", rest "", value TokenStream("pid:4,")
         // field Field(Row{row:196811,file:1}), input"{0,0,0,0,0,15}", rest"", value TokenStream("Value:[0,0,0,0,0,15,],"),nm_val_type Some((TokenStream("Value"),TokenStream("[0,0,0,0,0,15,]"),"array","array"))
