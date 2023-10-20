@@ -110,18 +110,22 @@ impl SearchOpts {
     } else         	{self.sopt = opt;}
     self}
 }
-pub fn get_const_kv_from(src:&Path) -> Result<HashMap<String,String>,Box<dyn std::error::Error>> {
+pub fn get_const_kv_from(src:&Path,opts:&SearchOpts) -> Result<HashMap<String,String>,Box<dyn std::error::Error>> {
   if !src.exists() {p!("Couldn't find {:?}",src); std::process::exit(1)};
 
   let mut win32_const:HashMap<String,String>	= HashMap::with_capacity(200_000 * 2);
 
+  let SearchOpt::ValInd(val_ind) = opts.sopt;
+  p!("val_ind={:?}",&val_ind);
+  let mut p_1st = true;
   if let Ok(lines) = read_lines(src) {
     for line in lines { // consumes iterator, returns an (Optional) String
       if let Ok(val_tab_key) = line {	// WM_RENDERFORMAT 773
-        let val_key:Vec<&str> = val_tab_key.splitn(3,'\t').collect();
-        if val_key.len() >= 2 {
-          let (key,val)	= (val_key[0].to_string(),val_key[1].to_string()); //WM_RENDERFORMAT 773
-          // p!("{}={}",&key,&val);
+        let val_key:Vec<&str> = val_tab_key.splitn((val_ind + 2).into(),'\t').collect();
+        let val_ind_sz = usize::try_from(val_ind).unwrap();
+        if val_key.len() >= val_ind_sz {
+          let (key,val)	= (val_key[0].to_string(),val_key[val_ind_sz - 1].to_string()); //WM_RENDERFORMAT 773
+          if p_1st {p_1st = false; p!("{}={}",&key,&val);}
           win32_const.insert(key, val); // push original WM_RENDERFORMAT
         }
       }
