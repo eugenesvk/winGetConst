@@ -973,7 +973,7 @@ fn const_ptrs(pointers: usize) -> TokenStream {
     "*const ".repeat(pointers).into()
 }
 
-fn to_feature(name: &str) -> String {
+pub fn to_feature(name: &str) -> String {
     let mut feature = String::new();
 
     for name in name.split('.').skip(1) {
