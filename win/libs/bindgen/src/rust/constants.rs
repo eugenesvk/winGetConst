@@ -119,7 +119,8 @@ fn field_initializer<'a>(writer:&Writer, field:Field, input:&'a str) -> (TokenSt
     //                                                                                                          nm,val        ,type_nm,type_prim
     let name = to_ident(writer.reader.field_name(field));
 
-    match writer.reader.field_type(field, None) {
+    let field_type = writer.reader.field_type(field,None);
+    match field_type {
         Type::GUID => {
             let (literals, rest) = read_literal_array(input, 11);
             // println!("literals {:?}, rest {:?}", literals, rest);
@@ -134,8 +135,14 @@ fn field_initializer<'a>(writer:&Writer, field:Field, input:&'a str) -> (TokenSt
         }
         Type::Win32Array(_, len) => {
             let (literals, rest) = read_literal_array(input, len);
+            let literals_cc = literals.clone();
+            let type_ = &field_type;
+            let type_nm = type_prim_to_str(&type_);
+            let type_prim = type_to_primitive(writer.reader, &type_);
+            // println!("input={:?} literal= {:?} rest={:?} type_={:?} type_nm={:?} type_prim={:?}",&input,&literal,&rest,&type_,&type_nm,&type_prim); //input=", 4" literal= "4" rest="" type_=U32 type_nm="u32" type_prim="u32"
             let literals = literals.iter().map(|literal| TokenStream::from(*literal));
-            (quote! { #name: [#(#literals,)*], }, rest, None)
+            let lit_cc = literals_cc.iter().map(|literal| TokenStream::from(*literal));
+            (quote! {#name: [#(#literals,)*],}, rest, Some((name,quote!{[#(#lit_cc,)*]},type_nm.to_string(),type_prim.to_string())))
         }
         _ => {
             let (literal, rest) = read_literal(input);
@@ -144,7 +151,7 @@ fn field_initializer<'a>(writer:&Writer, field:Field, input:&'a str) -> (TokenSt
             let type_prim = type_to_primitive(writer.reader, &type_);
             // println!("input={:?} literal= {:?} rest={:?} type_={:?} type_nm={:?} type_prim={:?}",&input,&literal,&rest,&type_,&type_nm,&type_prim); //input=", 4" literal= "4" rest="" type_=U32 type_nm="u32" type_prim="u32"
             let literal: TokenStream = literal.into();
-            (quote! { #name: #literal, }, rest, Some((name,literal,type_nm.to_string(),type_prim.to_string())))
+            (quote! {#name: #literal,}, rest, Some((name,literal,type_nm.to_string(),type_prim.to_string())))
         }
     }
 }
