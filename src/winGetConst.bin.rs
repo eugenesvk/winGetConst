@@ -99,6 +99,17 @@ fn parse_num_suffix(num:&str) -> Result<String,()> {
 
 
 
+enum SearchOpt {ValInd(u8),}
+pub struct SearchOpts {sopt:SearchOpt}
+impl SearchOpts {
+  fn default()                            ->      Self {
+    Self {sopt:SearchOpt::ValInd(2)}}
+  fn add_option(&mut self, opt:SearchOpt) -> &mut Self {
+    let SearchOpt::ValInd(val_ind) = opt;
+    if val_ind == 0	{self.sopt = SearchOpt::ValInd(1); p!("✗@SearchOpts: 0→1");
+    } else         	{self.sopt = opt;}
+    self}
+}
 pub fn get_const_kv_from(src:&Path) -> Result<HashMap<String,String>,Box<dyn std::error::Error>> {
   if !src.exists() {p!("Couldn't find {:?}",src); std::process::exit(1)};
 
