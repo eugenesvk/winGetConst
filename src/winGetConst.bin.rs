@@ -202,8 +202,8 @@ fn test1(){
   p!("{:?} → {:?}",val,my_num);
 }
 
-fn riddle() {
-  let args: Vec<String> = std::env::args().skip(1).collect();
+fn winmd_to_tsv(args:&Vec<String>) { /*! aka 'riddle': parse Windows Metadata (WinMD) files using [windows-bindgen](https://crates.io/crates/windows-bindgen) compiler crate and saves results to a simple tab-separated name⭾type⭾type_native⭾value file */
+  // let args: Vec<String> = std::env::args().skip(1).collect();
   if args.is_empty() {println!(r#"Usage: riddle.exe [options...]
 Options:
   --in  <path>          Path to files and directories containing .winmd and .rdl files
