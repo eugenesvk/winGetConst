@@ -570,6 +570,7 @@ impl<'a> Writer<'a> {
         }
     }
     pub fn interface_winrt_trait(&self, def: TypeDef, generics: &[Type], ident: &TokenStream, constraints: &TokenStream, _phantoms: &TokenStream, features: &TokenStream) -> TokenStream {
+        let feature_ns  = to_feature(&self.namespace);
         if self.reader.type_def_flags(def).contains(TypeAttributes::WindowsRuntime) {
             let type_signature = if self.reader.type_def_kind(def) == TypeKind::Class {
                 let type_signature = type_def_signature(self.reader, def, generics);
@@ -584,7 +585,7 @@ impl<'a> Writer<'a> {
             // let dfddf: ::windows_core::GUID = windows_core::GUID::from_signature(type_signature.as_str().into());
             // const IID: ::windows_core::GUID = ::windows_core::GUID::from_signature(<Self as ::windows_core::RuntimeType>::SIGNATURE);}
 
-            if type_signature.as_str() != ""	{quote! {#iid_ #ident #tab SIGNATURE #tab str #tab #type_signature;}
+            if type_signature.as_str() != ""	{quote! {#iid_ #ident #tab SIGNATURE #tab str #tab #type_signature #tab #feature_ns;}
             } else                          	{quote! {}}
         } else {quote! {}}
     }
@@ -608,9 +609,10 @@ impl<'a> Writer<'a> {
     }
 
     pub fn interface_trait(&self, def: TypeDef, generics: &[Type], ident: &TokenStream, constraints: &TokenStream, features: &TokenStream, has_unknown_base: bool) -> TokenStream {
+        let feature_ns  = to_feature(&self.namespace);
         if let Some(default) = type_def_default_interface(self.reader, def) {
             let default_name = self.type_name(&default);
-            quote! {#iid_ #ident #tab GUID #tab str #tab #default_name;}
+            quote! {#iid_ #ident #tab GUID #tab str #tab #default_name #tab #feature_ns;}
         } else {
             let guid = if generics.is_empty() {
                 match type_def_guid(self.reader, def) {
@@ -620,7 +622,7 @@ impl<'a> Writer<'a> {
             } else {return quote! {}}; // todo: add generic types with some concrete types???
 
             let mut tokens = quote! {};
-            if has_unknown_base {tokens.combine(&quote! {#iid_ #ident #tab GUID #tab str #tab #guid;});}
+            if has_unknown_base {tokens.combine(&quote! {#iid_ #ident #tab GUID #tab str #tab #guid #tab #feature_ns;});}
 
             tokens
         }

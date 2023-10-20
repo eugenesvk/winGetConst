@@ -11,7 +11,8 @@ pub fn writer(writer: &Writer, def: Field) -> TokenStream {
     let ty = writer.reader.field_type(def, None).to_const_type();
     let cfg = field_cfg(writer.reader, def);
     let doc = writer.cfg_doc(&cfg);
-    let features = writer.cfg_features(&cfg);
+    let feature_ns  = writer::to_feature(&writer.namespace); //Win32_Security_AppLocker
+    // p!("feature_ns {:?}",&feature_ns);
 
     // println!("def= {:?} ty={:?}",&def,&ty); //def=Field(Row{row:15644,file:2})ty=TypeDef(TypeDef(Row{row:3837,file:2}),[])
     if let Some(constant) = writer.reader.field_constant(def) {
@@ -24,14 +25,14 @@ pub fn writer(writer: &Writer, def: Field) -> TokenStream {
                       	let type_ = Type::PCSTR;
                       	let type_nm = writer.type_name(&type_);
                       	let type_prim = type_to_primitive(writer.reader, &type_);
-                      	quote! {#name #tab #type_nm  #tab #type_prim #tab #value;}
+                      	quote! {#name #tab #type_nm  #tab #type_prim #tab #value #tab #feature_ns;}
                 } else	{let value = writer.value(        &writer.reader.constant_value(constant));
                       	let type_ = Type::PCWSTR;
                       	let type_nm = writer.type_name(&type_);
                       	let type_prim = type_to_primitive(writer.reader, &type_);
-                      	quote! {#name #tab #type_nm #tab #type_prim #tab #value;}}
+                      	quote! {#name #tab #type_nm #tab #type_prim #tab #value #tab #feature_ns;}}
             } else    	{let value_t = writer.typed_value(&writer.reader.constant_value(constant));
-                      	quote! {#name #tab #value_t;}}
+                      	quote! {#name #tab #value_t #tab #feature_ns;}}
                       	// pub const D3DKMT_SUBKEY_DX9: PCWSTR = "DX9";
                       	// p!("¦{:?}¦",writer.reader.constant_value(constant)); //¦String("DX9")¦
                       	// p!("¦{}¦",value); //¦"DX9"¦ patched→ ¦DX9¦
@@ -61,8 +62,8 @@ pub fn writer(writer: &Writer, def: Field) -> TokenStream {
             if !writer.sys && type_has_replacement(writer.reader, &ty) { //HRESULT|PCSTR|PCWSTR|has_attr(NativeTypedefAttribute)|TypeKind::Enum
                   	//quote! {#name #tab #kind #tab #kind(#value);}
                   	let type_prim = type_to_primitive(writer.reader, &ty);
-                  	 quote! {#name #tab #kind #tab #type_prim #tab #value;}
-            } else	{quote! {#name #tab #kind #tab _          #tab #value;}}
+                  	 quote! {#name #tab #kind #tab #type_prim #tab #value #tab #feature_ns;}
+            } else	{quote! {#name #tab #kind #tab _          #tab #value #tab #feature_ns;}}
         }
     } else if let Some(guid) = field_guid(writer.reader, def) {
         let value = writer.guid(&guid);
@@ -71,7 +72,7 @@ pub fn writer(writer: &Writer, def: Field) -> TokenStream {
         let type_ = Type::GUID;
         let type_nm = writer.type_name(&type_);
         let type_prim = type_to_primitive(writer.reader, &type_);
-        quote! {#name #tab #type_nm #tab #type_prim #tab #value;}
+        quote! {#name #tab #type_nm #tab #type_prim #tab #value #tab #feature_ns;}
     } else if let Some((value, nm_val)) = initializer(writer, def) {
         let kind = writer.type_default_name(&ty);
         let mut result = quote! {};

@@ -150,6 +150,7 @@ fn namespace(writer: &Writer, tree: &Tree) -> String {
 
     let mut types = BTreeMap::<TypeKind, BTreeMap<&str, TokenStream>>::new();
 
+    let feature_ns  = writer::to_feature(&writer.namespace);
     for item in writer.reader.namespace_items(writer.namespace, writer.filter) {
         // println!("name = {:?}",&name); //"DWMFLIP3D_DEFAULT"
         match item {
@@ -213,7 +214,7 @@ fn namespace(writer: &Writer, tree: &Tree) -> String {
                                 let type_ = Type::GUID;
                                 let type_nm = writer.type_name(&type_);
                                 let type_prim = type_to_primitive(writer.reader, &type_);
-                                let constant = quote! {#clsid_ #ident #tab #type_nm #tab #type_prim #tab #value;};
+                                let constant = quote! {#clsid_  #ident #tab #type_nm #tab #type_prim #tab #value #tab #feature_ns;};
                                 types.entry(TypeKind::Class).or_default().entry(name).or_default().combine(&constant);
                                 continue;
                             }
