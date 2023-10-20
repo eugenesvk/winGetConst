@@ -43,6 +43,7 @@ pub fn writer(writer: &Writer, def: Field) -> TokenStream {
         } else {
             let kind = writer.type_default_name(&ty);
             let value = writer.value(&writer.reader.constant_value(constant));
+            let val_lit = parse_lit(&value.to_string());
             let underlying_type = type_underlying_type(writer.reader, &ty);
 
             // pub const MaxKeySetInfoClass: KEY_SET_INFORMATION_CLASS
@@ -50,12 +51,10 @@ pub fn writer(writer: &Writer, def: Field) -> TokenStream {
             //constant=Constant(Row{row:5253,file:2}) value=TokenStream("2i32") constant_type=I32 underlying_type=I32
 
             let value = if underlying_type == constant_type {
-                                             // value
-                                            TokenStream(parse_lit(&value.to_string()))
+                 TokenStream(val_lit)
             } else if writer.std && underlying_type == Type::ISize {
-                  	 quote! { ::core::ptr::invalid_mut(#value as _) } // todo: convert to actual value
-                  	 // quote! { ::core::ptr::invalid_mut(#value as _) } // ::core::ptr::invalid_mut: expresses that the pointer is not associated with any actual allocation and is little more than a usize address in disguise.
-            } else	{quote! {                          #value as _ }};
+                  	 quote! {#val_lit} // ::core::ptr::invalid_mut(#value as _)
+            } else	{quote! {#val_lit}}; // as _
 
             // println!("value_pos={:?}",&value); // 2
 
