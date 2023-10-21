@@ -429,8 +429,11 @@ impl<'a> Writer<'a> {
             Value::F64(value) => quote! { #value },
             Value::String(value) => {
                 let mut tokens = "".to_string(); // \"
-                for u in value.chars() {write!(tokens,"{}",u).unwrap();} //u.escape_default()
-                // String("\\Device\\FSVideo") → \Device\FSVideo
+
+                for u in value.chars() {
+                    write!(tokens, "{}", u.escape_default()).unwrap();
+                }
+
                 // tokens.push('\"');
                 tokens.into()
             }
