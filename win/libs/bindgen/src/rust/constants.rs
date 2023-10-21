@@ -16,6 +16,8 @@ pub fn writer(writer: &Writer, def: Field) -> TokenStream {
 
     // println!("def= {:?} ty={:?}",&def,&ty); //def=Field(Row{row:15644,file:2})ty=TypeDef(TypeDef(Row{row:3837,file:2}),[])
     if let Some(constant) = writer.reader.field_constant(def) {
+        // p!("constant={:?}",&writer.reader.constant_value(constant));
+        // constant=String("\\Device\\FSVideo") with removed escapes → \Device
         let constant_type = writer.reader.constant_type(constant);
 
         if ty == constant_type {
