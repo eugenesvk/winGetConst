@@ -75,14 +75,14 @@ pub fn writer(writer: &Writer, def: Field) -> TokenStream {
     } else if let Some((value, nm_val)) = initializer(writer, def) {
         let kind = writer.type_default_name(&ty);
         let mut result = quote! {};
-        let val = quote! {#name #tab #kind #tab _ #tab {#value};}; result.combine(&val); // combo type, no primitive
+        let val = quote! {#name #tab #kind #tab _ #tab {#value} #tab #feature_ns;}; result.combine(&val); // combo type, no primitive
         // p!("value {:?} nm_val {:?}",&value,&nm_val);
         // SECURITY_APP_PACKAGE_AUTHORITY SID_IDENTIFIER_AUTHORITY _ {Value:[0,0,0,0,0,15,],}
         // val TokenStream("Value:[0,0,0,0,0,1,],") nm_val {"Value": ("[0,0,0,0,0,1,]", "array", "array")}
         if nm_val.len() > 0 {
             for (k,(v,type_nm,type_prim)) in nm_val {
                 // println!("v={:?} type_nm={:?} type_prim={:?}",&v,&type_nm,&type_prim); // v="{c50a3f10-aa5c-4247-b830-d6a6f8eaa310}" type_nm="GUID" type_prim="str"
-                let val = quote! {#name _ #k #tab #type_nm #tab #type_prim #tab #v;}; result.combine(&val);
+                let val = quote! {#name _ #k #tab #type_nm #tab #type_prim #tab #v #tab #feature_ns;}; result.combine(&val);
                 // DEVPKEY_Device_ActivityId_fmtid¦GUID¦str¦{c50a3f10-aa5c-4247-b830-d6a6f8eaa310}
                 // SECURITY_APP_PACKAGE_AUTHORITY_Value¦array¦array¦[0,0,0,0,0,15,]
             }
