@@ -51,6 +51,9 @@ fn gen_file(writer: &Writer) -> Result<()> {
         let mut tokens = String::new();
         let root = Tree::new(writer.reader, writer.filter);
 
+        let header = format!("Name\tType\tTypePrimitive\tValue\tNamespace\n");
+        tokens.push_str(&header);
+
         for tree in root.nested.values() {
             tokens.push_str(&namespace(writer, tree));
         }
