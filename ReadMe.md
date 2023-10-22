@@ -9,8 +9,9 @@ Windows API constants data dump
 
 ## Introduction
 A work-in-progress attempt to leverage the official [windows-bindgen](https://crates.io/crates/windows-bindgen) Windows metadata compiler Rust library to create a database of all the constants for further use in a [DLL](https://github.com/eugenesvk/winAPIconst/) that would allow looking up constant values by full/short name in, e.g., AutoHotkey scripts' calls to Windows APIs.
+Resulting tab-separated data is at [windows_sys 185k constants](../../raw/data/data/1%20WinMD/winConst_bindgen_All_185k.rar)
 
-Resulting tab-separated data is at [windows_sys non-blank 112k constants](../../raw/data/data/winConst_Valid_112k.txt.rar) and with added extra data from [a Ziggle tool](https://www.autohotkey.com/boards/viewtopic.php?f=83&t=99581) at [windows_sys+ziggle 175k constants](../../raw/data/data/winConst_Valid_ziggle_175k.rar)
+A simpler alternative approach of using the [Trustfall adapter library](https://docs.rs/trustfall-rustdoc-adapter) that parsed cargo docs (behind the `rustdoc` feature) couldn't retrieve the values for ~14k out of ~126k constants since the docs don't contain all the information (e.g., `PCWSTR` string values in `w!` macros). Resulting tab-separated data is at [windows_sys non-blank 112k constants](../../raw/data/data/2%20rustdoc/winConst_Valid_112k.txt.rar) and with added extra data from [a Ziggle tool](https://www.autohotkey.com/boards/viewtopic.php?f=83&t=99581) at [windows_sys+ziggle 180k constants](../../raw/data/data/2%20rustdoc/winConst_Valid_ziggle_180k.txt.rar)
 
 ## Install
 
@@ -32,14 +33,13 @@ Resulting tab-separated data is at [windows_sys non-blank 112k constants](../../
   SECURITY_APP_PACKAGE_AUTHORITY_Value	_                       	array        	[0,0,0,0,0,15,]
   ```
 - Generic interfaces like `IObservableVector<T>` are not included
-- Duplicate names (mostly IIDs) are disambiguated adding `_`-separated namespaces to the name
-  ```
-  Name                                       	TypeNative	TypePrimitive	Value
-  IID_IPowerManagerStatics@Phone_System_Power	GUID      	str          	{25de8fd0-1c5b-11e1-bddb-0800200c9a66}	Phone_System_Power
-  IID_IPowerManagerStatics@System_Power      	GUID      	str          	{1394825d-62ce-4364-98d5-aa28c7fbd15b}	System_Power
-  ```
-
 
 ## Known issues
+- Duplicate names (~150 mostly IIDs [src](../../raw/data/data/1%20WinMD/winConst_dupe%20150.log.rar)) are __NOT__ disambiguated and is left to the user
+  ```
+  Name                    	Type	TypePrimitive	Value                                 	Namespace
+  IID_IPowerManagerStatics	GUID	str          	{25de8fd0-1c5b-11e1-bddb-0800200c9a66}	Phone_System_Power
+  IID_IPowerManagerStatics	GUID	str          	{1394825d-62ce-4364-98d5-aa28c7fbd15b}	System_Power
+  ```
 
 ## Credits
