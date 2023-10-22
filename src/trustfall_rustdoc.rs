@@ -16,6 +16,36 @@ use std      	::{env,
   iter       	::Peekable,
   time       	::Duration};
 
+pub fn generate_rustdoc() {
+  // 1. install semver checks to generate json
+  // cargo binstall cargo-semver-checks
+  // 2. generate json for the latest Windows sys crate version
+  // manifest_p = r'path/to/cargo/registry/src/github.com-1ecc6299db9ec823/windows-sys-0.48.0/Cargo.toml'
+  // cargo semver-checks --manifest-path @(manifest_p) --baseline-root @(manifest_p)
+  // get results from ./cache/cargo/semver-checks/target/doc
+  // 3. use rustdoc_find_consts_adapter_directly to parse that json
+
+  // ↓ simpler way to generate docs with cargo?
+  // generate rustdoc pub_module_level_const_missing.json (though crate creates a new project first to do that)
+  // $RUSTC_BOOTSTRAP=1
+  // $RUSTDOCFLAGS="-Z unstable-options --document-private-items --document-hidden-items --output-format=json --cap-lints allow"
+  // $manifest = "../test_crates/pub_module_level_const_missing/new/Cargo.toml"
+  // $target = "..cargo/semver-checks/target"
+  // $pkg = "pub_module_level_const_missing@0.1.1"
+  // cargo doc --manifest-path $manifest --target-dir $target --package $pkg
+}
+
+pub fn rustdocs_to_tsv() { /*! Parse Windows_sys crate rustdocs generated via cargo-semver-checks and saves results to a simple tab-separated name⭾value⭾type file
+    winConst_All.txt    	all constants
+    winConst_Blank.txt  	constants where values are blank (_) as they're not in the rustdocs
+    winConst_Valid.txt  	all non-blank constants */
+  let crate_rustdoc_path	:&Path	= Path::new("./test_data/pub_module_level_const_missing_mod.json"); // short crate to use for testing instead of the huge ↓
+  let crate_rustdoc_path	:&Path	= Path::new("./test_data/windows_sys_0.48.0.json");
+  let query_path        	:&Path	= Path::new("./src/query/query_const.ron");
+  let _ = rustdoc_find_consts(&crate_rustdoc_path,&query_path);
+}
+
+
 pub fn rustdoc_type_as_str(type_:&rustdoc_types::Type) -> String {
   use rustdoc_types::Type::*;
   match type_ {
