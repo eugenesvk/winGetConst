@@ -21,6 +21,7 @@ Resulting tab-separated data is at [windows_sys non-blank 112k constants](../../
   - WinMD: `D3DDDIFMT_X8R8G8B8 = 22u` in `enum D3DDDIFORMAT: uint`
 - enums use underlying type (primitive converted, rest are `_`)
 - Constant structs with only GUID `FaxAccountFolders` (no fields) are prefixed with `CLSID_`
+- COM interfaces like `ILearningModel` are prefixed with `IID_` for their GUIDs
 - Constant structs like `DEVPKEY_Device_ActivityId`(type `DEVPROPKEY`) with fields `fmtid`(`Guid`) and `pid`(`uint`) are stored as a full string representation as well as individual fields (`_`-appended to the constant name), e.g.:
   ```
   Name                                	TypeNative              	TypePrimitive	Value
@@ -31,6 +32,13 @@ Resulting tab-separated data is at [windows_sys non-blank 112k constants](../../
   SECURITY_APP_PACKAGE_AUTHORITY_Value	_                       	array        	[0,0,0,0,0,15,]
   ```
 - Generic interfaces like `IObservableVector<T>` are not included
+- Duplicate names (mostly IIDs) are disambiguated adding `_`-separated namespaces to the name
+  ```
+  Name                                       	TypeNative	TypePrimitive	Value
+  IID_IPowerManagerStatics@Phone_System_Power	GUID      	str          	{25de8fd0-1c5b-11e1-bddb-0800200c9a66}	Phone_System_Power
+  IID_IPowerManagerStatics@System_Power      	GUID      	str          	{1394825d-62ce-4364-98d5-aa28c7fbd15b}	System_Power
+  ```
+
 
 ## Known issues
 
