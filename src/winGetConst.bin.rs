@@ -245,7 +245,9 @@ Options:
   }
 }
 
+#[cfg(feature="rustdoc")]
 pub mod trustfall_rustdoc;
+#[cfg(feature="rustdoc")]
 use trustfall_rustdoc::{rustdoc_find_consts,rustdocs_to_tsv};
 
 fn main() {
@@ -264,10 +266,9 @@ fn main() {
     cargo run -- --in @(fin) --out @(fout) --filter @(filter)
     "#;
   } else if let Some(pos) = args.iter().position(|x| *x == "rdoc") {
-    p!("Comparing WinMD to Ziggle");
-    // compare_winmd_to_ziggle();	// 2 Compares winConst files ↑ to a ziggle database and generates lists of differences (extra constants, missing constants, constants with different values)
-  } else if let Some(pos) = args.iter().position(|x| *x == "rdoc") {
+    #[cfg(feature="rustdoc")]
     p!("converting Windows_sys rustdocs to TSV");
+    #[cfg(feature="rustdoc")]
     rustdocs_to_tsv();	// 1 Windows_sys rustdocs → TSV
   } else if let Some(pos) = args.iter().position(|x| *x == "wmd2ziggle") {
     let this_p:&Path	= Path::new("./data/winConst_bindgen_All_185k");
