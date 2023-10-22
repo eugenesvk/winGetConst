@@ -301,14 +301,13 @@ fn main() {
     rustdocs_to_tsv();	// 1 Windows_sys rustdocs → TSV
   } else if let Some(pos) = args.iter().position(|x| *x == "wmd2ziggle") {
     let this_p:&Path	= Path::new("./data/winConst_bindgen_All_185k");
-    compare_this_to_ziggle((ziggle_p,2),(this_p,4),None); // 2 Compares winConst files ↑ to a ziggle database and generates lists of differences (extra constants, missing constants, constants with different values)
+    compare_this_to_ziggle(ziggle_p,this_p,None); // 2 Compares winConst files ↑ to a ziggle database and generates lists of differences (extra constants, missing constants, constants with different values)
   } else if let Some(pos) = args.iter().position(|x| *x == "rdoc2ziggle") {
     let this_p      	:&Path	= Path::new("./data/winConst_Valid.txt");
     let this_blank_p	:&Path	= Path::new("./data/winConst_Blank.txt");
-    compare_this_to_ziggle((ziggle_p,2),(this_p,2),Some((this_blank_p,2))); // 2 Compares winConst files ↑ to a ziggle database and generates lists of differences (extra constants, missing constants, constants with different values)
+    compare_this_to_ziggle(ziggle_p,this_p,Some(this_blank_p)); // 2 Compares winConst files ↑ to a ziggle database and generates lists of differences (extra constants, missing constants, constants with different values)
   } else if let Some(pos) = args.iter().position(|x| *x == "merge2ziggle") {
-    let col_i = 2;
-    merge_this_with_ziggle(col_i);	// 3 Add missing constants from the ziggle database
+    merge_this_with_ziggle();	// 3 Add missing constants from the ziggle database
   } else if let Some(pos) = args.iter().position(|x| *x == "test") {
     // test1()
     // let tsv		= "21\t22\t23".to_string();
