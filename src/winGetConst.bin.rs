@@ -219,24 +219,24 @@ fn compare_this_to_ziggle(ziggle_p:&Path,this_p:&Path,blank_p_:Option<&Path>) {
     None	=> {}}
 }
 
-fn merge_this_with_ziggle(col_i:u8) {
-  let ziggle_p       	:&Path	= Path::new("../winAPIconst/data/ziggle_clean64.txt");
-  let this_p         	:&Path	= Path::new("./data/winConst_Valid.txt");
-  let merged_p       	:&Path	= Path::new("./data/winConst_Valid_ziggle.txt");
-  let merged_f       	= File::create(&merged_p).unwrap();
-  let mut merged_buff	= BufWriter::new(merged_f);
+fn merge_this_with_ziggle() {
+  // let ziggle_p       	:&Path	= Path::new("../winAPIconst/data/ziggle_clean64.txt");
+  // let this_p         	:&Path	= Path::new("./data/winConst_Valid.txt");
+  // let merged_p       	:&Path	= Path::new("./data/winConst_Valid_ziggle.txt");
+  // let merged_f       	= File::create(&merged_p).unwrap();
+  // let mut merged_buff	= BufWriter::new(merged_f);
 
-  let mut sopts = SearchOpts::default(); sopts.add_option(SearchOpt::ValInd(col_i));
-  let const_zig      	:HashMap<String,String> = get_const_kv_from(ziggle_p,&sopts).unwrap();
-  let const_this     	:HashMap<String,String> = get_const_kv_from(this_p  ,&sopts).unwrap();
-  let mut win32_const	:BTreeMap<String,String>	= BTreeMap::new();
-  for (c_name,c_val) in &const_this {
-    win32_const.insert(c_name.to_string(),c_val.to_string());};
-  for (c_name,c_val) in &const_zig {
-    if   !const_this.contains_key(c_name)	{win32_const.insert(c_name.to_string(),c_val.to_string());}};
-  for (c_name,c_val) in &win32_const {
-    merged_buff.write(format!("{}\t{}\n",c_name,c_val).as_bytes()).unwrap();};
-  merged_buff.flush().unwrap();
+  // let mut sopts = SearchOpts::default(); sopts.add_option(SearchOpt::ValInd(col_i));
+  // let const_zig      	:HashMap<String,String> = get_const_kv_from(ziggle_p,&sopts).unwrap();
+  // let const_this     	:HashMap<String,String> = get_const_kv_from(this_p  ,&sopts).unwrap();
+  // let mut win32_const	:BTreeMap<String,String>	= BTreeMap::new();
+  // for (c_name,c_val) in &const_this {
+  //   win32_const.insert(c_name.to_string(),c_val.to_string());};
+  // for (c_name,c_val) in &const_zig {
+  //   if   !const_this.contains_key(c_name)	{win32_const.insert(c_name.to_string(),c_val.to_string());}};
+  // for (c_name,c_val) in &win32_const {
+  //   merged_buff.write(format!("{}\t{}\n",c_name,c_val).as_bytes()).unwrap();};
+  // merged_buff.flush().unwrap();
 }
 
 fn test1(){
