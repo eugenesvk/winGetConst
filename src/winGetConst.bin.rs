@@ -154,57 +154,65 @@ pub fn get_const_kv_from(src:&Path) -> Result<(HashMap<String,String>,HashMap<St
 pub const tab	:&[u8]	= "\t".as_bytes();
 pub const nl 	:&[u8]	= "\n".as_bytes();
 use std::fs  	::File;
-use std::io  	::{self,prelude::*,BufRead,BufWriter};
-fn compare_this_to_ziggle(p_i_zig:(&Path,u8),p_i_this:(&Path,u8),p_i_blank:Option<(&Path,u8)>) {
-  let log_p1            	:&Path	= Path::new("./data/winConst_vs_ziggle_extra.log");
-  let log_p2            	:&Path	= Path::new("./data/winConst_vs_ziggle_missing.log");
-  let log_p4            	:&Path	= Path::new("./data/winConst_vs_ziggle_diff_value.log");
-  // if log_p1.is_file()	{return Err(format!("Aborting, file exists {:?}",log_p1).into())};
-  // if log_p2.is_file()	{return Err(format!("Aborting, file exists {:?}",log_p2).into())};
-  // if log_p4.is_file()	{return Err(format!("Aborting, file exists {:?}",log_p4).into())};
-  let log_f1            	= File::create (&log_p1).unwrap();
-  let mut log_buff1     	= BufWriter::new(log_f1);
-  let log_f2            	= File::create (&log_p2).unwrap();
-  let mut log_buff2     	= BufWriter::new(log_f2);
-  let log_f4            	= File::create (&log_p4).unwrap();
-  let mut log_buff4     	= BufWriter::new(log_f4);
+use std::io  	::{self,prelude::*,BufRead,BufWriter,Write};
+fn compare_this_to_ziggle(ziggle_p:&Path,this_p:&Path,blank_p_:Option<&Path>) {
+  let log_extra_p  	:&Path	= Path::new("./data/winConst_vs_ziggle_extra.log");
+  let log_miss_p   	:&Path	= Path::new("./data/winConst_vs_ziggle_missing.log");
+  let log_diff_p   	:&Path	= Path::new("./data/winConst_vs_ziggle_diff_value.log");
+  let log_dupe_z_p 	:&Path	= Path::new("./data/winConst_dupe_ziggle.log");
+  let log_dupe_th_p	:&Path	= Path::new("./data/winConst_dupe.log");
 
-  // log_buff1.write("Constants present in this crate, but missing from Ziggle".as_bytes()).unwrap();
-  // log_buff1.write(nl).unwrap();
-  // log_buff2.write("Constants present in Ziggle, but missing from this crate".as_bytes()).unwrap();
-  // log_buff2.write(nl).unwrap();
-  // log_buff4.write("Constants present in Ziggle and this crate, but with different values".as_bytes()).unwrap();
-  // log_buff4.write(nl).unwrap();
+  // if log_extra_p.is_file()  	{return Err(format!("Aborting, file exists {:?}",log_extra_p  	).into())};
+  // if log_miss_p.is_file()   	{return Err(format!("Aborting, file exists {:?}",log_miss_p   	).into())};
+  // if log_diff_p.is_file()   	{return Err(format!("Aborting, file exists {:?}",log_diff_p   	).into())};
+  // if log_dupe_z_p.is_file() 	{return Err(format!("Aborting, file exists {:?}",log_dupe_z_p 	).into())};
+  // if log_dupe_th_p.is_file()	{return Err(format!("Aborting, file exists {:?}",log_dupe_th_p	).into())};
 
-  let col_i_this  	:u8	= p_i_this.1;
-  let col_i_zig   	:u8	= p_i_zig.1;
-  let mut opt_this	= SearchOpts::default(); opt_this.add_option(SearchOpt::ValInd(col_i_this));
-  let mut opt_zig 	= SearchOpts::default(); opt_zig .add_option(SearchOpt::ValInd(col_i_zig ));
-  let this_p      	:&Path	= p_i_this.0;
-  let ziggle_p    	:&Path	= p_i_zig.0;
-  let const_zig   	:HashMap<String,String> = get_const_kv_from(ziggle_p,&opt_zig ).unwrap();
-  let const_this  	:HashMap<String,String> = get_const_kv_from(this_p  ,&opt_this).unwrap();
+  let log_extra_f  	= File::create(&log_extra_p  	).unwrap();	let mut log_extra_buff  	= BufWriter::new(log_extra_f);
+  let log_miss_f   	= File::create(&log_miss_p   	).unwrap();	let mut log_miss_buff   	= BufWriter::new(log_miss_f);
+  let log_diff_f   	= File::create(&log_diff_p   	).unwrap();	let mut log_diff_buff   	= BufWriter::new(log_diff_f);
+  let log_dupe_z_f 	= File::create(&log_dupe_z_p 	).unwrap();	let mut log_dupe_z_buff 	= BufWriter::new(log_dupe_z_f);
+  let log_dupe_th_f	= File::create(&log_dupe_th_p	).unwrap();	let mut log_dupe_th_buff	= BufWriter::new(log_dupe_th_f);
+
+  let header     	= "Name\tValue\n".as_bytes();
+  let header_diff	= "Name\tValue\tValueZig\n".as_bytes();
+  log_extra_buff.write("# Constants present in this crate, but missing from Ziggle\n".as_bytes()).unwrap();
+  log_extra_buff.write(&header).unwrap();
+  log_miss_buff.write("# Constants present in Ziggle, but missing from this crate\n".as_bytes()).unwrap();
+  log_miss_buff.write(&header).unwrap();
+  log_diff_buff.write("# Constants present in Ziggle and this crate, but with different values\n".as_bytes()).unwrap();
+  log_diff_buff.write(&header_diff).unwrap();
+  log_dupe_z_buff.write("# Duplicate constants in Ziggle\n".as_bytes()).unwrap();
+  log_dupe_z_buff.write(&header).unwrap();
+  log_dupe_th_buff.write("# Duplicate constants in this crate\n".as_bytes()).unwrap();
+  log_dupe_th_buff.write(&header).unwrap();
+
+  let (const_zig ,dupe_zig )	= get_const_kv_from(ziggle_p).unwrap();
+  let (const_this,dupe_this)	= get_const_kv_from(this_p  ).unwrap();
   for (c_name,c_val) in &const_this   {
-    if   !const_zig    .contains_key(c_name) {log_buff1.write(format!("{}\t{}\n"    ,c_name,c_val).as_bytes()).unwrap();
-    } else if &const_zig[c_name] != c_val    {log_buff4.write(format!("{}\t{}\t{}\n",c_name,c_val,const_zig[c_name]).as_bytes()).unwrap();}
+    if !const_zig.contains_key(c_name)   	{log_extra_buff.write(format!("{}\t{}\n"    ,c_name,c_val).as_bytes()).unwrap();
+    } else if &const_zig[c_name] != c_val	{log_diff_buff .write(format!("{}\t{}\t{}\n",c_name,c_val,const_zig[c_name]).as_bytes()).unwrap();}
   };
-  log_buff1.flush().unwrap();
-  log_buff2.flush().unwrap();
-  log_buff4.flush().unwrap();
+  for (c_name,c_val) in &dupe_zig 	{log_dupe_z_buff .write(format!("{}\t{}\n",c_name,c_val).as_bytes()).unwrap();};
+  for (c_name,c_val) in &dupe_this	{log_dupe_th_buff.write(format!("{}\t{}\n",c_name,c_val).as_bytes()).unwrap();};
+  log_extra_buff.flush().unwrap();
+  log_miss_buff.flush().unwrap();
+  log_diff_buff.flush().unwrap();
+  log_dupe_z_buff.flush().unwrap();
+  log_dupe_th_buff.flush().unwrap();
 
-  match p_i_blank {
-    Some((blank_p,blank_col_i)) => {
-      let mut sopts_blank   	= SearchOpts::default(); sopts_blank.add_option(SearchOpt::ValInd(col_i_this  ));
-      let log_p3:&Path      	= Path::new("./data/winConst_vs_ziggle_blank.log");
-      // if log_p3.is_file()	{return Err(format!("Aborting, file exists {:?}",log_p3).into())};
-      let log_blank_f       	= File::create (&log_p3).unwrap();
-      let mut log_blank_buff	= BufWriter::new(log_blank_f);
-      // log_blank_buff.write("Constants present in Ziggle, but blank in this crate".as_bytes()).unwrap();
-      // log_blank_buff.write(nl).unwrap();
-      let const_this_blank	:HashMap<String,String> = get_const_kv_from(blank_p,&sopts_blank).unwrap();
+  match blank_p_ {
+    Some(blank_p) => {
+      let log_blank_p:&Path      	= Path::new("./data/winConst_vs_ziggle_blank.log");
+      // if log_blank_p.is_file()	{return Err(format!("Aborting, file exists {:?}",log_blank_p).into())};
+      let log_blank_f            	= File::create (&log_blank_p).unwrap();
+      let mut log_blank_buff     	= BufWriter::new(log_blank_f);
+      log_blank_buff.write("# Constants present in Ziggle, but blank in this crate\n".as_bytes()).unwrap();
+      log_blank_buff.write(&header).unwrap();
+      let (const_this_blank,dupe_this_blank)	= get_const_kv_from(blank_p).unwrap();
       for (c_name,c_val) in &const_zig {
         if   !const_this      .contains_key(c_name)	{
-          if !const_this_blank.contains_key(c_name)	{log_buff2.write(format!("{}\t{}\n"    ,c_name,c_val).as_bytes()).unwrap();
+          if !const_this_blank.contains_key(c_name)	{log_miss_buff .write(format!("{}\t{}\n"    ,c_name,c_val).as_bytes()).unwrap();
           } else                                   	{log_blank_buff.write(format!("{}\t{}\n"    ,c_name,c_val).as_bytes()).unwrap();};};};
       log_blank_buff.flush().unwrap();
     },
