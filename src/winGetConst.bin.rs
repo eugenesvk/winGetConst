@@ -98,6 +98,9 @@ fn parse_num_suffix(num:&str) -> Result<String,()> {
   }
 }
 
+pub const col_name_nm     	:&str	= "name";
+pub const col_value_nm    	:&str	= "value";
+pub const col_namespace_nm	:&str	= "namespace";
 
 
 enum SearchOpt {ValInd(u8),}
