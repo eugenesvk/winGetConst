@@ -7,7 +7,7 @@ use helper::fs    	::*;
 use helper::parser	::*;
 
 use std::path       	::{self,Path,PathBuf};
-use std::collections	::{HashMap,BTreeMap};
+use std::collections	::{HashMap,BTreeMap,HashSet};
 
 pub mod binmod;
 use crate::binmod::print42;
@@ -22,7 +22,8 @@ use anyhow::Context;
 use std::sync::Arc;
 use trustfall::{Schema, TryIntoStruct};
 
-use std::{env,io::Write,iter::Peekable,time::Duration};
+use std::{env,iter::Peekable,time::Duration,error::Error,process,
+  ffi::OsString,};
 
 pub mod trustfall_rustdoc;
 use trustfall_rustdoc::rustdoc_find_consts;
