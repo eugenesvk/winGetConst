@@ -102,41 +102,53 @@ pub const col_name_nm     	:&str	= "name";
 pub const col_value_nm    	:&str	= "value";
 pub const col_namespace_nm	:&str	= "namespace";
 
-
-enum SearchOpt {ValInd(u8),}
-pub struct SearchOpts {sopt:SearchOpt}
-impl SearchOpts {
-  fn default()                            ->      Self {
-    Self {sopt:SearchOpt::ValInd(2)}}
-  fn add_option(&mut self, opt:SearchOpt) -> &mut Self {
-    let SearchOpt::ValInd(val_ind) = opt;
-    if val_ind == 0	{self.sopt = SearchOpt::ValInd(1); p!("✗@SearchOpts: 0→1");
-    } else         	{self.sopt = opt;}
-    self}
-}
-pub fn get_const_kv_from(src:&Path,opts:&SearchOpts) -> Result<HashMap<String,String>,Box<dyn std::error::Error>> {
-  if !src.exists() {p!("Couldn't find {:?}",src); std::process::exit(1)};
-
+pub fn get_const_kv_from(src:&Path) -> Result<(HashMap<String,String>,HashMap<String,String>),Box<dyn Error>> {
+  p!("Processing ‘{:?}’ into a HashMap...",&src);
   let mut win32_const:HashMap<String,String>	= HashMap::with_capacity(200_000 * 2);
+  let mut dupe_const :HashMap<String,String>	= HashMap::with_capacity(    100 * 2);
+  let mut dupe_set   :HashSet<String>       	= HashSet::new();
 
-  let SearchOpt::ValInd(val_ind) = opts.sopt;
-  p!("val_ind={:?}",&val_ind);
-  let mut p_1st = true;
-  if let Ok(lines) = read_lines(src) {
-    for line in lines { // consumes iterator, returns an (Optional) String
-      if let Ok(val_tab_key) = line {	// WM_RENDERFORMAT 773
-        let val_key:Vec<&str> = val_tab_key.splitn((val_ind + 2).into(),'\t').collect();
-        let val_ind_sz = usize::try_from(val_ind).unwrap();
-        if val_key.len() >= val_ind_sz {
-          let (key,val)	= (val_key[0].to_string(),val_key[val_ind_sz - 1].to_string()); //WM_RENDERFORMAT 773
-          if p_1st {p_1st = false; p!("{}={}",&key,&val);}
-          win32_const.insert(key, val); // push original WM_RENDERFORMAT
-        }
-      }
+  let mut rdr	= csv::ReaderBuilder::new().has_headers(true).delimiter(b'\t').comment(Some(b'#')).from_path(src)?;
+  let hd = rdr.headers()?.clone();
+  let col_name_i      	= hd.iter().position(|x| x.to_ascii_lowercase() == col_name_nm     ).unwrap();
+  let col_value_i     	= hd.iter().position(|x| x.to_ascii_lowercase() == col_value_nm    ).unwrap();
+  let col_namespace_i_	= hd.iter().position(|x| x.to_ascii_lowercase() == col_namespace_nm);
+
+  use unescaper::unescape; // required since strings are escaped
+  for (i, res) in rdr.records().enumerate() {
+    let record = res?;
+    let (key,val)	= (record[col_name_i ].to_string(),unescape(&record[col_value_i])?); //WM_RENDERFORMAT 773
+    let mut ns = "".to_string();
+    if let Some(col_namespace_i)	= col_namespace_i_ {
+      ns = ns + " @ " + &record[col_namespace_i];}
+    if i==1 {p!("  {}={}{}",&key,&val,&ns);}
+    if win32_const.contains_key(&key) &&
+       win32_const.get(&key).unwrap() != &val	{//p!("  dupe {}={}{}",&key,&val,&ns);
+                                             	 win32_const.remove(&key);
+                                             	 dupe_set   .insert(key);
+    } else                                   	{win32_const.insert(key,val);}
+  }
+  if dupe_set.len() != 0 { // repeat iteration to insert only dupes, but now with namespaces
+    p!("  reinserting dupes");
+    let mut rdr	= csv::ReaderBuilder::new().has_headers(true).delimiter(b'\t').comment(Some(b'#')).from_path(src)?;
+    let mut print_1 = true;
+    for (i, res) in rdr.records().enumerate() {
+      let record = res?;
+      let (key,val)	= (record[col_name_i ].to_string(),unescape(&record[col_value_i])?); //WM_RENDERFORMAT 773
+      if dupe_set.contains(&key) {
+        let mut ns = "".to_string();
+        if let Some(col_namespace_i)	= col_namespace_i_ {
+          ns = ns + "@" + &record[col_namespace_i];
+        } else {p!("dupe, but no namespace, overwriting {}",&key);}
+        let key_ns = key.clone() + &ns;
+        if print_1 {p!("  dupe {}={}",&key_ns,&val); print_1 = false}
+        win32_const.insert(key_ns.clone(),val.clone());
+        dupe_const .insert(key_ns        ,val);}
     }
   }
-  p!("Returning a HashMap of ‘{}’ elements from ‘{:?}’",win32_const.len(),&src);
-  Ok(win32_const)
+
+  p!("  → HashMap of ‘{}’ elements and ‘{}’ dupes from ‘{:?}’",win32_const.len(),dupe_const.len(),&src);
+  Ok((win32_const,dupe_const))
 }
 
 pub const tab	:&[u8]	= "\t".as_bytes();
