@@ -22,7 +22,7 @@ use anyhow::Context;
 use std::sync::Arc;
 
 use std::{env,iter::Peekable,time::Duration,error::Error,process,
-  ffi::OsString,};
+  ffi::{OsString,OsStr}};
 
 fn test(){
   pub enum TypeX {
