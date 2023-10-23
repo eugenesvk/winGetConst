@@ -72,6 +72,36 @@ pub fn parse_lit(num:&str) -> String {
   }
 }
 
+use std::ffi::{OsStr,OsString};
+pub fn concat_os_str2(a:&OsStr, b:&OsStr) -> OsString {
+  let mut ret = OsString::with_capacity(a.len() + b.len()); // allocate once
+  ret.push(a); ret.push(b); // doesn't allocate
+  ret
+}
+pub fn concat_os_str2_s(a:&OsStr, b:&OsStr) -> Result<OsString,Box<dyn std::error::Error>> {
+  let a_len = a.len();
+  let b_len = b.len();
+  let cap 	= usize::MAX - a_len; println!("{:?}",&cap);
+  if b_len < cap {
+    let mut ret = OsString::with_capacity(a_len + b_len); // allocate once
+    ret.push(a); ret.push(b); // doesn't allocate
+    return Ok(ret);
+  } else {return Err(format!("∑ of string lengths > usize ‘{}’",usize::MAX).into())}
+}
+pub fn concat_oss(ss:&[&OsStr]) -> Result<OsString,Box<dyn std::error::Error>> {
+  let mut len:usize = 0;
+  for s in ss {
+    let slen	= s.len();
+    let cap 	= usize::MAX - len;
+    if slen < cap {
+      len += slen;
+    } else {return Err(format!("∑ of passed string lengths exceeds usize ‘{}’",usize::MAX).into())}
+    }
+  let mut ret = OsString::with_capacity(len); // allocate once
+  for s in ss { ret.push(s); } // doesn't allocate
+  Ok(ret)
+}
+
 // {81d0bfd5-6afe-48c2-99c0-95a08f97c5da}	DXVA_COPPQueryConnectorType
 // let myguid = ahkGUID::from_u128(0x81d0bfd5_6afe_48c2_99c0_95a08f97c5da);
                             // 81d0bfd5-6afe-48c2-99c0-95a08f97c5da
