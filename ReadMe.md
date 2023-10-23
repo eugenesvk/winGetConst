@@ -33,13 +33,13 @@ A simpler alternative approach of using the [Trustfall adapter library](https://
   SECURITY_APP_PACKAGE_AUTHORITY_Value	_                       	array        	[0,0,0,0,0,15,]
   ```
 - Generic interfaces like `IObservableVector<T>` are not included
+- Duplicate names (~150 mostly IIDs [src](../../raw/data/data/1%20WinMD/winConst_dupe%20150.log.rar)) are disambiguated adding `_`-separated namespaces to the name in a separate [file](../../raw/data/data/1%20WinMD/winConst_bindgen_All_185k_dedupe.rar)
+  ```
+  Name                                       	TypeNative	TypePrimitive	Value
+  IID_IPowerManagerStatics@Phone_System_Power	GUID      	str          	{25de8fd0-1c5b-11e1-bddb-0800200c9a66}	Phone_System_Power
+  IID_IPowerManagerStatics@System_Power      	GUID      	str          	{1394825d-62ce-4364-98d5-aa28c7fbd15b}	System_Power
+  ```
 
 ## Known issues
-- Duplicate names (~150 mostly IIDs [src](../../raw/data/data/1%20WinMD/winConst_dupe%20150.log.rar)) are __NOT__ disambiguated and is left to the user
-  ```
-  Name                    	Type	TypePrimitive	Value                                 	Namespace
-  IID_IPowerManagerStatics	GUID	str          	{25de8fd0-1c5b-11e1-bddb-0800200c9a66}	Phone_System_Power
-  IID_IPowerManagerStatics	GUID	str          	{1394825d-62ce-4364-98d5-aa28c7fbd15b}	System_Power
-  ```
 
 ## Credits
