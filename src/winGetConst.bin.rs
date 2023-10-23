@@ -127,6 +127,55 @@ pub fn get_const_kv_from(src:&Path) -> Result<(HashMap<String,String>,HashMap<St
   p!("  → HashMap of ‘{}’ elements and ‘{}’ dupes from ‘{:?}’",win32_const.len(),dupe_const.len(),&src);
   Ok((win32_const,dupe_const))
 }
+pub fn get_const_kvals_from(src:&Path) -> Result<(BTreeMap<String,Vec<String>>,BTreeMap<String,Vec<String>>),Box<dyn Error>> {
+  p!("Processing ‘{:?}’ into a sorted BTreeMap...",&src);
+  let mut win32_const:BTreeMap<String,Vec<String>>	= BTreeMap::new();
+  let mut dupe_const :BTreeMap<String,Vec<String>>	= BTreeMap::new();
+  let mut dupe_set   :HashSet<String>             	= HashSet::new();
+
+  let mut rdr	= csv::ReaderBuilder::new().has_headers(true).delimiter(b'\t').comment(Some(b'#')).from_path(src)?;
+  let hd = rdr.headers()?.clone();
+  let col_name_i      	= hd.iter().position(|x| x.to_ascii_lowercase() == col_name_nm     ).unwrap();
+  let col_value_i     	= hd.iter().position(|x| x.to_ascii_lowercase() == col_value_nm    ).unwrap();
+  let col_namespace_i_	= hd.iter().position(|x| x.to_ascii_lowercase() == col_namespace_nm);
+
+  use unescaper::unescape; // required since strings are escaped
+  for (i, res) in rdr.records().enumerate() {
+    let record = res?;
+    let (key,val)	= (record[col_name_i ].to_string(),unescape(&record[col_value_i])?); //WM_RENDERFORMAT 773
+    if win32_const.contains_key(&key) &&
+       win32_const.get(&key).unwrap()[col_value_i] != val {
+      win32_const.remove(&key);
+      dupe_set   .insert(key); // ↓ store full record use key only for sorting
+    } else	{
+      let rec_vec = record.iter().map(|x| x.to_string()).collect::<Vec<String>>();
+      win32_const.insert(key,rec_vec);}
+  }
+  if dupe_set.len() != 0 { // repeat iteration to insert only dupes, but now with namespaces
+    p!("  reinserting dupes");
+    let mut rdr	= csv::ReaderBuilder::new().has_headers(true).delimiter(b'\t').comment(Some(b'#')).from_path(src)?;
+    let mut print_1 = true;
+    for (i, res) in rdr.records().enumerate() {
+      let record = res?;
+      let (key,val)	= (record[col_name_i ].to_string(),unescape(&record[col_value_i])?); //WM_RENDERFORMAT 773
+      if dupe_set.contains(&key) {
+        let mut ns = "".to_string();
+        if let Some(col_namespace_i)	= col_namespace_i_ {
+          ns = ns + "@" + &record[col_namespace_i];
+        } else {p!("dupe, but no namespace, overwriting {}",&key);}
+        let key_ns = key.clone() + &ns;
+        if print_1 {p!("  dupe {}={}",&key_ns,&val); print_1 = false}
+        let mut rec_vec = record.iter().map(|x| x.to_string()).collect::<Vec<String>>();
+        rec_vec[0] = key_ns.clone();
+        win32_const.insert(key_ns.clone(),rec_vec.clone());
+        dupe_const .insert(key_ns        ,rec_vec);}
+    }
+  }
+
+  p!("  → BTreeMap of ‘{}’ elements and ‘{}’ dupes from ‘{:?}’",win32_const.len(),dupe_const.len(),&src);
+  Ok((win32_const,dupe_const))
+}
+
 
 pub const tab	:&[u8]	= "\t".as_bytes();
 pub const nl 	:&[u8]	= "\n".as_bytes();
