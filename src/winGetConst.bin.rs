@@ -360,6 +360,9 @@ fn main() {
   } else if let Some(pos) = args.iter().position(|x| *x == "wmd2ziggle") {
     let this_p:&Path	= Path::new("./data/winConst_bindgen_All_185k");
     compare_this_to_ziggle(ziggle_p,this_p,None); // 2 Compares winConst files ↑ to a ziggle database and generates lists of differences (extra constants, missing constants, constants with different values)
+  } else if let Some(pos) = args.iter().position(|x| *x == "wmd_dedupe") {
+    let this_p	= Path::new("./data/winConst_bindgen_All_185k");
+    let _ = dedupe_const_csv(&this_p); // 3 Dedupe winConst file (also sort it)
   } else if let Some(pos) = args.iter().position(|x| *x == "rdoc2ziggle") {
     let this_p      	:&Path	= Path::new("./data/winConst_Valid.txt");
     let this_blank_p	:&Path	= Path::new("./data/winConst_Blank.txt");
