@@ -299,6 +299,44 @@ pub mod trustfall_rustdoc;
 #[cfg(feature="rustdoc")]
 use trustfall_rustdoc::{rustdoc_find_consts,rustdocs_to_tsv};
 
+fn dedupe_const_csv(csv_p:&Path) -> Result<(),Box<dyn Error>>{
+  let mut csv_dedupe_p	= PathBuf::from(csv_p); // ./data/winConst_bindgen_All_185k
+  let mut log_dupe_p  	= csv_dedupe_p.clone();
+  let parent          	= csv_p.parent()   .unwrap();                 	// ./data/
+  let stem_in         	= csv_p.file_stem().unwrap_or(OsStr::new(""));	// winConst_bindgen_All_185k
+  let ext_in          	= csv_p.extension().unwrap_or(OsStr::new(""));	//
+  let stem_out        	= concat_os_str2(&stem_in,&OsStr::new("_dedupe"));
+  csv_dedupe_p.set_file_name(&stem_out);
+  csv_dedupe_p.set_extension(&ext_in);
+  log_dupe_p.set_file_name(&stem_out);
+  log_dupe_p.set_extension("log");
+
+  // p!("{:?}",csv_p); p!("{:?}",csv_dedupe_p); p!("{:?}",log_dupe_p);
+  // if log_dupe_p.is_file() {return Err(format!("Aborting, file exists {:?}",log_dupe_p).into())};
+  // if csv_dedupe_p.is_file() {return Err(format!("Aborting, file exists {:?}",csv_dedupe_p).into())};
+  let csv_dedupe_f	= File::create(&csv_dedupe_p).unwrap();	let mut csv_dedupe_buff	= BufWriter::new(csv_dedupe_f);
+  let log_dupe_f  	= File::create(&log_dupe_p  ).unwrap();	let mut log_dupe_buff  	= BufWriter::new(log_dupe_f);
+
+  // let header	= "Name\tType\tTypePrimitive\tValue\tNamespace\n".as_bytes();
+  log_dupe_buff.write("# DeDuplicated constants\n".as_bytes())?;
+  let mut rdr	= csv::ReaderBuilder::new().has_headers(true).delimiter(b'\t').comment(Some(b'#')).from_path(csv_p)?;
+  let hd = rdr.byte_headers()?;
+  for field in hd.iter() {
+    csv_dedupe_buff.write(&field)?; csv_dedupe_buff.write(tab)?;
+    log_dupe_buff  .write(&field)?; log_dupe_buff  .write(tab)?;
+  }
+  csv_dedupe_buff.write(nl)?;
+  log_dupe_buff  .write(nl)?;
+
+  let (const_this,dupe_this) = get_const_kvals_from(csv_p).unwrap();
+  // c_vals contains the key as well, so no need to insert c_name
+  for (c_name,c_vals) in &const_this	{csv_dedupe_buff.write(format!("{}\n",c_vals.join("\t")).as_bytes()).unwrap();};
+  for (c_name,c_vals) in &dupe_this 	{log_dupe_buff  .write(format!("{}\n",c_vals.join("\t")).as_bytes()).unwrap();};
+
+  csv_dedupe_buff.flush().unwrap();
+  log_dupe_buff  .flush().unwrap();
+  Ok(())
+}
 fn main() {
   let mut args: Vec<String> = std::env::args().skip(1).collect();
   let ziggle_p	:&Path	= Path::new("../winAPIconst/data/ziggle_clean64.txt");
