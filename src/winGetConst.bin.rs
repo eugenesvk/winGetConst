@@ -321,9 +321,13 @@ fn dedupe_const_csv(csv_p:&Path) -> Result<(),Box<dyn Error>>{
   log_dupe_buff.write("# DeDuplicated constants\n".as_bytes())?;
   let mut rdr	= csv::ReaderBuilder::new().has_headers(true).delimiter(b'\t').comment(Some(b'#')).from_path(csv_p)?;
   let hd = rdr.byte_headers()?;
-  for field in hd.iter() {
-    csv_dedupe_buff.write(&field)?; csv_dedupe_buff.write(tab)?;
-    log_dupe_buff  .write(&field)?; log_dupe_buff  .write(tab)?;
+  let hd_len = hd.len();
+  for (i, field) in hd.iter().enumerate() {
+    csv_dedupe_buff.write(&field)?;
+    log_dupe_buff  .write(&field)?;
+    if i < hd_len { // add tabs to all but the last field
+      csv_dedupe_buff.write(tab)?;
+      log_dupe_buff  .write(tab)?;};
   }
   csv_dedupe_buff.write(nl)?;
   log_dupe_buff  .write(nl)?;
